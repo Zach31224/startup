@@ -1,8 +1,8 @@
-# Your startup name here
+# Pythings – Creative Code Puzzles
 
 [My Notes](notes.md)
 
-A brief description of the application here. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Pythings is a python learning website. You solve puzzles and make cool pixel art by writing Python code. Try game levels (like coding your way through a maze), drawing challenges (where you match a picture using code), or just freestyle your own art. See your code run instantly, get feedback, and share your creations with friends!
 
 
 > [!NOTE]
@@ -18,45 +18,41 @@ A brief description of the application here. Lorem ipsum dolor sit amet, consect
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] Proper use of Markdown
-- [ ] A concise and compelling elevator pitch
-- [ ] Description of key features
-- [ ] Description of how you will use each technology
-- [ ] One or more rough sketches of your application. Images must be embedded in this file using Markdown image references.
+- [x] Proper use of Markdown
+- [x] A concise and compelling elevator pitch
+- [x] Description of key features
+- [x] Description of how you will use each technology
+- [x] One or more rough sketches of your application. Images must be embedded in this file using Markdown image references.
 
-### Elevator pitch
+### 🚀 Elevator Pitch
+Pythings is a web platform where users solve visual puzzles and create art by writing Python code, allowing people to learn python in a fun environment. You can play games, make art, and even compete with friends. There is also a tutorial to get you set up with the basics. 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 ### Design
+![Design image](sceetch.png)
+I plan to make it snaked themed (because python), with green and black being the main color scheme. You can see the tentative designs of a terminal and game environment as well.
 
-![Design image](placeholder.png)
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-```mermaid
-sequenceDiagram
-    actor You
-    actor Website
-    You->>Website: Replace this with your design
-```
-
-### Key features
-
-- Describe your key feature
-- Describe your key feature
-- Describe your key feature
+## ✨ Key Features
+- **User Authentication:** Register, login, and track your progress.
+- **In-Browser Python Editor:** Write and run code with a Bit-like API.
+- **Beginner Mode:** Learn how to code in python with guided tutorials. 
+- **Challenge Mode:** Take on geometry challenges, code a character through mazes, or replicate a picture.
+- **Free Mode:** Design challenges for yourself and others, create a nice work of art, or simply code. 
+- **Auto-Grading & Scoring:** System checks your solution and updates leaderboards.
+- **Sharing** View and comment on art made by the community, and try to beat their challenges. 
 
 ### Technologies
 
 I am going to use the required technologies in the following ways.
 
-- **HTML** - Description here
-- **CSS** - Description here
-- **React** - Description here
-- **Service** - Description here
-- **DB/Login** - Description here
-- **WebSocket** - Description here
+| Technology | Usage |
+|------------|-------|
+| **HTML**   | Page layout: login, dashboard/menu, editor, gallery. |
+| **CSS**    | Responsive, playful UI; animate code output and transitions. |
+| **React**  | Componentization: code editor, canvas, puzzles, gallery; client routing; interactivity. |
+| **Web Service** | Endpoints for auth, code execution, puzzles, art, comments. |
+| **Database** | Store users, code/art, comments, puzzle data, scores. |
+| **WebSocket** | Real-time chat, pair coding, leaderboard updates. |
 
 ## 🚀 AWS deliverable
 
