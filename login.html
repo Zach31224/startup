@@ -3,30 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <title>Login – Pythings</title>
+  <link rel="stylesheet" href="play.css">
+</head>
+<body>
+<head>
+  <meta charset="UTF-8">
+  <title>Pythings – Creative Code Puzzles</title>
+  <link rel="icon" href="placeholder.png">
+  <link rel="stylesheet" href="main.css">
 </head>
 <body>
   <header>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="login.html">Login/Register</a>
-      <a href="editor.html">Editor</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="scores.html">Leaderboard</a>
+    <h1>Pythings – Creative Code Puzzles</h1>
+    <h2>Login</h2>
+    <nav class="pything-nav">
+      <a href="index.html" class="pything-nav-link active">Home</a>
+      <a href="login.html" class="pything-nav-link">Login/Register</a>
+      <a href="editor.html" class="pything-nav-link">Editor</a>
+      <a href="gallery.html" class="pything-nav-link">Gallery</a>
+      <a href="scores.html" class="pything-nav-link">Leaderboard</a>
+      <a href="https://github.com/Zach31224/startup" class="pything-nav-link" target="_blank">GitHub Repo</a>
     </nav>
   </header>
   <main>
-    <h2>Login/Register</h2>
-    <!-- Authentication Placeholder -->
-    <form>
-      <label for="username">Username:</label>
-      <input id="username" type="text" placeholder="Enter your name" required>
-      <br>
-      <label for="password">Password:</label>
-      <input id="password" type="password" placeholder="Enter your password" required>
-      <br>
-      <button type="submit">Login</button>
-    </form>
-    <p><em>User info will be displayed here after login.</em></p>
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; min-height: 40vh;">
+      <!-- Authentication Placeholder -->
+      <form style="background: #fff; border: 3px solid #114c26; border-radius: 18px; box-shadow: 2px 4px 0 #114c26; padding: 2em; min-width: 300px; display: flex; flex-direction: column; align-items: center;">
+        <label for="username" style="font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif; color: #114c26; margin-bottom: 0.3em;">Username:</label>
+        <input id="username" type="text" placeholder="Enter your name" required style="margin-bottom: 1em; border-radius: 8px; border: 2px solid #114c26; padding: 0.5em; width: 100%;">
+        <label for="password" style="font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif; color: #114c26; margin-bottom: 0.3em;">Password:</label>
+        <input id="password" type="password" placeholder="Enter your password" required style="margin-bottom: 1em; border-radius: 8px; border: 2px solid #114c26; padding: 0.5em; width: 100%;">
+        <button type="submit" class="editor-run-btn" style="margin-top: 1em;">Login</button>
+      </form>
+      <p style="font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif; color: #114c26; margin-top: 1em;"><em>User info will be displayed here after login.</em></p>
+    </div>
   </main>
 </body>
 </html>
