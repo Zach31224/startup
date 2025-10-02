@@ -66,35 +66,52 @@ footer {
   font-size: 1.2em;
 }
 
-menu {
-  flex: 1;
+.pything-nav {
   display: flex;
-  /*  overwrite Bootstrap so the menu does not wrap */
-  flex-direction: row !important;
+  flex-direction: row;
+  gap: 2em;
+  justify-content: center;
+  margin: 2em 0;
   list-style: none;
+  padding: 0;
+}
+.pything-nav-link {
+  color: #114c26;
+  font-size: 1.3em;
+  padding: 0.5em 1.2em;
+  border-radius: 30px;
+  border: 3px solid #114c26;
+  background: #f5f5f5;
+  text-decoration: none;
+  font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif;
+  transition: background 0.2s, color 0.2s;
+}
+.pything-nav-link.active,
+.pything-nav-link:hover {
+  background: #c3fad6;
+  color: #0b2d17;
 }
 
-.navbar-brand {
-  padding-left: 0.3em;
-  border-bottom: solid rgb(182, 182, 182) thin;
-}
-
-menu .nav-item {
-  padding: 0 0.3em;
-}
-
-footer a {
-  float: right;
-}
-
-@media (max-height: 600px) {
-  header {
-    display: none;
+/* --- RESPONSIVE STYLES --- */
+@media (max-width: 700px) {
+  .pything-btn {
+    width: 150px;
+    height: 70px;
+    font-size: 1em;
+    border-radius: 35px/22px;
+    line-height: 70px;
+    margin: 1em;
   }
-  footer {
-    display: none;
+  .pything-nav-link {
+    font-size: 1em;
+    padding: 0.3em 0.7em;
+  }
+  header {
+    min-height: 70px;
+    margin-bottom: 0.5em;
   }
   main {
-    flex: 1 100vh;
+    padding: 1em 0;
   }
 }
+

@@ -9,14 +9,13 @@
 <body>
   <header>
     <h1>Pythings – Creative Code Puzzles</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="login.html">Login/Register</a>
-      <a href="editor.html">Editor</a>
-      <link rel="stylesheet" href="main.css">
-      <a href="gallery.html">Gallery</a>
-      <a href="scores.html">Leaderboard</a>
-      <a href="https://github.com/Zach31224/startup" target="_blank">GitHub Repo</a>
+    <nav class="pything-nav">
+      <a href="index.html" class="pything-nav-link active">Home</a>
+      <a href="login.html" class="pything-nav-link">Login/Register</a>
+      <a href="editor.html" class="pything-nav-link">Editor</a>
+      <a href="gallery.html" class="pything-nav-link">Gallery</a>
+      <a href="scores.html" class="pything-nav-link">Leaderboard</a>
+      <a href="https://github.com/Zach31224/startup" class="pything-nav-link" target="_blank">GitHub Repo</a>
     </nav>
   </header>
   <main>
@@ -27,17 +26,18 @@
         Try game levels, drawing challenges, or freestyle your own art. See your code run instantly, get feedback, and share creations!
       </p>
       <img src="sceetch.png" alt="Design Sketch" width="300">
+      <!-- Fix: ul tag was missing, and extra stylesheet links were present -->
+      <ul>
         <li><strong>Login:</strong> <a href="login.html">Go to Login</a></li>
         <li><strong>Editor:</strong> <a href="editor.html">Try coding!</a></li>
-        <link rel="stylesheet" href="main.css">
         <li><strong>Gallery:</strong> <a href="gallery.html">See community art</a></li>
         <li><strong>Leaderboard:</strong> <a href="scores.html">See scores</a></li>
       </ul>
     </section>
   </main>
   <footer>
-  <p><em>Zachary Sandberg</em></p>
-  <a href="https://github.com/Zach31224/startup" target="_blank">GitHub Repository</a>
+    <p><em>Zachary Sandberg</em></p>
+    <a href="https://github.com/Zach31224/startup" target="_blank">GitHub Repository</a>
   </footer>
 </body>
 </html>
