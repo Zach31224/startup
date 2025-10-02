@@ -3,29 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>Editor – Pythings</title>
+  <link rel="stylesheet" href="play.css">
 </head>
 <body>
   <header>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="login.html">Login/Register</a>
-      <a href="editor.html">Editor</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="scores.html">Leaderboard</a>
+    <nav class="pything-nav">
+      <a href="index.html" class="pything-nav-link">Home</a>
+      <a href="login.html" class="pything-nav-link">Login/Register</a>
+      <a href="editor.html" class="pything-nav-link active">Editor</a>
+      <a href="gallery.html" class="pything-nav-link">Gallery</a>
+      <a href="scores.html" class="pything-nav-link">Leaderboard</a>
     </nav>
   </header>
   <main>
-    <h2>Python Editor</h2>
-    <!-- Python Editor Placeholder -->
-    <textarea rows="10" cols="50" placeholder="Write your Python code here..."></textarea>
-    <br>
-    <button>Run Code</button>
-    <div>
+    <h2 class="game-name">Python Editor</h2>
+    <div class="controls center" style="position: static; width: auto; height: auto; background: none; padding: 0;">
+      <textarea rows="10" cols="50" placeholder="Write your Python code here..." style="width:100%; max-width:600px; margin-bottom:1em; border-radius:10px; border:2px solid #114c26;"></textarea>
+      <br>
+      <button class="button-top-right" style="width:150px; height:50px; font-size:1.2em; border-radius:25px; background-color:green; color:white; border:thick solid #114c26;">Run Code</button>
+    </div>
+    <div class="score center" style="position:static; width:auto; height:auto; background:none; border:none; color:#114c26; margin-top:2em;">
       <h3>Output:</h3>
       <pre><em>Your code's output will appear here.</em></pre>
     </div>
-    <p><em>Third-party API calls and code execution will be implemented here.</em></p>
+    <p class="system-event"><em>Third-party API calls and code execution will be implemented here.</em></p>
   </main>
 </body>
 </html>
-
