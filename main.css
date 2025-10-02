@@ -44,9 +44,26 @@ main {
   transition: box-shadow 0.2s, filter 0.2s;
   cursor: pointer;
 }
+.pything-btn:hover {
+  box-shadow: 8px 12px 0 #222;
+  filter: brightness(1.1);
+}
+.pything-btn-note {
+  font-size: 0.7em;
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: #114c26;
+  font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif;
+}
 
 footer {
-  flex: 0 30px;
+  min-height: 50px;
+  text-align: center;
+  padding: 1em 0;
+  background: none;
+  color: #114c26;
+  font-size: 1.2em;
 }
 
 menu {
