@@ -6,7 +6,7 @@ export function Editor() {
     <main>
       <div className="editor-container">
         <div className="editor-code-area">
-          <textarea className="editor-textarea" rows="20" cols="50" placeholder="Write your Python code here..."></textarea>
+          <textarea className="editor-textarea" rows="20" cols="40" placeholder="Write your Python code here..."></textarea>
           <button className="editor-run-btn">Run Code</button>
           <div>
             <h3 style={{
