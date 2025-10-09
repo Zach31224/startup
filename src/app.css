@@ -1,0 +1,61 @@
+body {
+  background-color: #c3fad6;
+  min-width: 375px;
+  font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif;
+  color: #114c26;
+}
+
+header {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #114c26;
+  margin-bottom: 2em;
+  color: #fff;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 60vh;
+  padding: 2em 0;
+}
+
+footer {
+  min-height: 50px;
+  text-align: center;
+  padding: 1em 0;
+  background: none;
+  color: #114c26;
+  font-size: 1.2em;
+}
+
+.pything-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+  justify-content: center;
+  margin: 2em 0;
+  list-style: none;
+  padding: 0;
+}
+.pything-nav-link {
+  color: #114c26;
+  font-size: 1.3em;
+  padding: 0.5em 1.2em;
+  border-radius: 30px;
+  border: 3px solid #114c26;
+  background: #f5f5f5;
+  text-decoration: none;
+  font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif;
+  transition: background 0.2s, color 0.2s;
+}
+.pything-nav-link.active,
+.pything-nav-link:hover {
+  background: #c3fad6;
+  color: #0b2d17;
+}
