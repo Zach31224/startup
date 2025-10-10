@@ -16,7 +16,7 @@ export function Editor() {
           </div>
           <p className="system-event"><em>Third-party API calls and code execution will be implemented here.</em></p>
         </div>
-        <img src="/public/Maze.png" className="editor-maze-img" alt="Maze" />
+        <img src="/Maze.png" className="editor-maze-img" alt="Maze" />
       </div>
     </main>
   );
