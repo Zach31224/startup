@@ -1,10 +1,6 @@
 import React from 'react';
 import './scores.css';
 
-/**
- * Scores reads top scores from localStorage (will make later)
- * Score items expected: { name, score, date, time_taken }
- */
 export function Scores({ userName = '', authState = 'unauthenticated' }) {
   const [scores, setScores] = React.useState([]);
 

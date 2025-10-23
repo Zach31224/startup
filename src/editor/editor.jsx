@@ -191,6 +191,14 @@ export function Editor() {
         </div>
       </div>
 
+      <div className="puzzle-header">
+        <h2>Puzzle Number 1:</h2>
+        <p>Create a code that will output the following:</p>
+        <div className="puzzle-requirement">
+          "This is just a placeholder. I will have a series of puzzles implemented soon."
+        </div>
+      </div>
+
       <div className="editor-container">
         <div className="editor-code-area" aria-label="Code editor">
           <div className="code-editor-wrapper">

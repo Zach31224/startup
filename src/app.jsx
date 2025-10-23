@@ -19,7 +19,6 @@ function NotFound() {
 
 export default function App() {
   const [authState, setAuthState] = React.useState(() => {
-    // initialize from localStorage if present
     const storedUser = localStorage.getItem('pythings.user');
     return storedUser ? AuthState.Authenticated : AuthState.Unauthenticated;
   });
@@ -30,6 +29,12 @@ export default function App() {
   function handleAuthChange(newUserName, newAuthState) {
     setUserName(newUserName || '');
     setAuthState(newAuthState);
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('pythings.user');
+    setUserName('');
+    setAuthState(AuthState.Unauthenticated);
   }
 
   return (
@@ -43,11 +48,14 @@ export default function App() {
               <NavLink to="/login" className="pything-nav-link">Login/Register</NavLink>
             )}
             {authState === AuthState.Authenticated && (
-              <NavLink to="/editor" className="pything-nav-link">Editor</NavLink>
+              <NavLink to="/editor" className="pything-nav-link">Puzzles</NavLink>
             )}
             <NavLink to="/gallery" className="pything-nav-link">Gallery</NavLink>
             {authState === AuthState.Authenticated && (
               <NavLink to="/scores" className="pything-nav-link">Leaderboard</NavLink>
+            )}
+            {authState === AuthState.Authenticated && (
+              <NavLink to="#" onClick={handleLogout} className="pything-nav-link">Logout</NavLink>
             )}
             <a href="https://github.com/Zach31224/startup" className="pything-nav-link" target="_blank" rel="noreferrer">GitHub Repo</a>
           </nav>
