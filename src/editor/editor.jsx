@@ -21,3 +21,52 @@ export function Editor() {
     </main>
   );
 }
+export function Timer() {
+const [elapsed, setElapsed] = React.useState(0);
+const [running, setRunning] = React.useState(false);
+const intervalRef = React.useRef(null);
+
+React.useEffect(() => {
+  if (running) {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setElapsed((s) => s + 1);
+    }, 1000);
+  } else {
+    // stop timer
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }
+  return () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+}, [running]);
+const editorDisabled = false;
+
+// Formatting helper (mm:ss)
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+// Start/pause/reset handlers
+function handleStart() {
+  setRunning(true);
+}
+
+function handlePause() {
+  setRunning(false);
+}
+
+function handleReset() {
+  setRunning(false);
+  setElapsed(0);
+  setOutput('');
+}
+}

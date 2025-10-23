@@ -8,6 +8,33 @@
   min-height: 70vh;
   background: #c3fad6;
 }
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.timer-badge {
+  font-family: 'Courier New', monospace;
+  background: #114c26;
+  color: #fff;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+}
+
+.timer-badge.disabled {
+  background: #666;
+  opacity: 0.85;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .editor-code-area {
   width: 350px;
   max-width: 100%;
