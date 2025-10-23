@@ -7,7 +7,6 @@ import { Login } from './login/login';
 import { Editor } from './editor/editor';
 import { Gallery } from './gallery/gallery';
 import { Scores } from './scores/scores';
-import { About } from './about/about';
 import { AuthState } from './auth';
 
 function NotFound() {
@@ -50,13 +49,11 @@ export default function App() {
             {authState === AuthState.Authenticated && (
               <NavLink to="/scores" className="pything-nav-link">Leaderboard</NavLink>
             )}
-            <NavLink to="/about" className="pything-nav-link">About</NavLink>
             <a href="https://github.com/Zach31224/startup" className="pything-nav-link" target="_blank" rel="noreferrer">GitHub Repo</a>
           </nav>
         </header>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login userName={userName} authState={authState} onAuthChange={handleAuthChange} />} />
           <Route path="/editor" element={<Editor />} />
           <Route path="/gallery" element={<Gallery />} />
