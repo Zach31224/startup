@@ -7,6 +7,8 @@ import { Login } from './login/login';
 import { Editor } from './editor/editor';
 import { Gallery } from './gallery/gallery';
 import { Scores } from './scores/scores';
+import { About } from './about/about';
+import { AuthState } from './auth';
 
 function NotFound() {
   return (
@@ -17,6 +19,20 @@ function NotFound() {
 }
 
 export default function App() {
+  const [authState, setAuthState] = React.useState(() => {
+    // initialize from localStorage if present
+    const storedUser = localStorage.getItem('pythings.user');
+    return storedUser ? AuthState.Authenticated : AuthState.Unauthenticated;
+  });
+  const [userName, setUserName] = React.useState(() => {
+    return localStorage.getItem('pythings.user') || '';
+  });
+
+  function handleAuthChange(newUserName, newAuthState) {
+    setUserName(newUserName || '');
+    setAuthState(newAuthState);
+  }
+
   return (
     <BrowserRouter>
       <div className="body">
@@ -24,24 +40,32 @@ export default function App() {
           <h1>Pythings – Creative Code Puzzles</h1>
           <nav className="pything-nav">
             <NavLink to="/" className="pything-nav-link">Home</NavLink>
-            <NavLink to="/login" className="pything-nav-link">Login/Register</NavLink>
-            <NavLink to="/editor" className="pything-nav-link">Editor</NavLink>
+            {authState !== AuthState.Authenticated && (
+              <NavLink to="/login" className="pything-nav-link">Login/Register</NavLink>
+            )}
+            {authState === AuthState.Authenticated && (
+              <NavLink to="/editor" className="pything-nav-link">Editor</NavLink>
+            )}
             <NavLink to="/gallery" className="pything-nav-link">Gallery</NavLink>
-            <NavLink to="/scores" className="pything-nav-link">Leaderboard</NavLink>
-            <a href="https://github.com/Zach31224/startup" className="pything-nav-link" target="_blank">GitHub Repo</a>
+            {authState === AuthState.Authenticated && (
+              <NavLink to="/scores" className="pything-nav-link">Leaderboard</NavLink>
+            )}
+            <NavLink to="/about" className="pything-nav-link">About</NavLink>
+            <a href="https://github.com/Zach31224/startup" className="pything-nav-link" target="_blank" rel="noreferrer">GitHub Repo</a>
           </nav>
         </header>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login userName={userName} authState={authState} onAuthChange={handleAuthChange} />} />
           <Route path="/editor" element={<Editor />} />
           <Route path="/gallery" element={<Gallery />} />
-          <Route path="/scores" element={<Scores />} />
+          <Route path="/scores" element={<Scores userName={userName} authState={authState} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <footer>
           <p><em>Zachary Sandberg</em></p>
-          <a href="https://github.com/Zach31224/startup" target="_blank">GitHub Repository</a>
+          <a href="https://github.com/Zach31224/startup" target="_blank" rel="noreferrer">GitHub Repository</a>
         </footer>
       </div>
     </BrowserRouter>
