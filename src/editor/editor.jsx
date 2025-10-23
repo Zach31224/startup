@@ -1,5 +1,6 @@
 import React from 'react';
 import './editor.css';
+import { saveScoreEntry } from '../utils/scores';
 
 export function Editor() {
   const [code, setCode] = React.useState(() => {
@@ -50,11 +51,40 @@ export function Editor() {
   }
 
   function handleStart() {
+    // start fresh: reset elapsed and begin timing
+    setElapsed(0);
+    setOutput('');
     setRunning(true);
   }
 
-  function handlePause() {
+  function handleFinish() {
+    // only finish if timer is running (or if elapsed > 0)
+    if (!running && elapsed === 0) {
+      setOutput('No run in progress to finish.');
+      return;
+    }
+
     setRunning(false);
+
+    const name = localStorage.getItem('pythings.user') || 'Anonymous';
+    const now = new Date().toLocaleString();
+
+    // Save a score entry with the elapsed time in the time_taken field
+    try {
+      saveScoreEntry({ name, score: 100, date: now, time_taken: elapsed });
+      setOutput(`Finished: ${formatTime(elapsed)} — saved score for ${name}.`);
+    } catch (e) {
+      // fallback: manual localStorage write if util fails
+      try {
+        const raw = localStorage.getItem('pythings.scores');
+        const arr = raw ? JSON.parse(raw) : [];
+        arr.push({ name, score: 100, date: now, time_taken: elapsed });
+        localStorage.setItem('pythings.scores', JSON.stringify(arr));
+        setOutput(`Finished: ${formatTime(elapsed)} — saved score for ${name} (fallback).`);
+      } catch {
+        setOutput(`Finished: ${formatTime(elapsed)} — failed to save score.`);
+      }
+    }
   }
 
   function handleReset() {
@@ -81,14 +111,12 @@ export function Editor() {
   const lineCount = Math.max(1, code.split('\n').length);
   const lineNumbers = Array.from({ length: lineCount }, (_, i) => i + 1);
 
-  // keep gutter scroll synced with textarea
   function handleScroll(e) {
     if (gutterRef.current) {
       gutterRef.current.scrollTop = e.target.scrollTop;
     }
   }
 
-  // Tab handling and auto-indent for textarea
   function handleKeyDown(e) {
     if (!textareaRef.current) return;
 
@@ -96,18 +124,15 @@ export function Editor() {
     const start = el.selectionStart;
     const end = el.selectionEnd;
 
-    // Insert tab (use 2 spaces or "\t")
     if (e.key === 'Tab') {
       e.preventDefault();
-      const tab = '  '; // two spaces; change to '\t' if you want a real tab
+      const tab = '  ';
       const newValue = code.slice(0, start) + tab + code.slice(end);
       setCode(newValue);
-      // move caret after inserted tab
       window.requestAnimationFrame(() => {
         el.selectionStart = el.selectionEnd = start + tab.length;
       });
     } else if (e.key === 'Enter') {
-      // auto-indent: copy indentation from current line
       const lineStart = code.lastIndexOf('\n', start - 1) + 1;
       const line = code.slice(lineStart, start);
       const indentMatch = line.match(/^\s*/);
@@ -121,14 +146,12 @@ export function Editor() {
         el.selectionStart = el.selectionEnd = pos;
       });
     } else if ((e.key === ']' || e.key === '[') && (e.ctrlKey || e.metaKey)) {
-      // optional: Ctrl+] / Ctrl+[ to indent/unindent the current line
       e.preventDefault();
       const lineStart = code.lastIndexOf('\n', start - 1) + 1;
       const lineEnd = code.indexOf('\n', start);
       const realLineEnd = lineEnd === -1 ? code.length : lineEnd;
       const lineText = code.slice(lineStart, realLineEnd);
       if (e.key === ']') {
-        // indent
         const newLine = '  ' + lineText;
         const newValue = code.slice(0, lineStart) + newLine + code.slice(realLineEnd);
         setCode(newValue);
@@ -138,7 +161,6 @@ export function Editor() {
           el.selectionEnd = end + delta;
         });
       } else {
-        // unindent (remove up to two leading spaces)
         const newLine = lineText.replace(/^ {0,2}/, '');
         const removed = lineText.length - newLine.length;
         const newValue = code.slice(0, lineStart) + newLine + code.slice(realLineEnd);
@@ -159,7 +181,7 @@ export function Editor() {
           <span className="timer-badge">{formatTime(elapsed)}</span>
           <div className="timer-controls">
             {!running && <button className="editor-run-btn" onClick={handleStart}>Start</button>}
-            {running && <button className="editor-run-btn" onClick={handlePause}>Pause</button>}
+            {running && <button className="editor-run-btn" onClick={handleFinish}>Finish</button>}
             <button className="editor-run-btn" onClick={handleReset}>Reset</button>
             <button className="editor-run-btn" onClick={handleRun}>Run</button>
           </div>

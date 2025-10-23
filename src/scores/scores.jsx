@@ -3,7 +3,7 @@ import './scores.css';
 
 /**
  * Scores reads top scores from localStorage (will make later)
- * Score items expected: { name, score, date }
+ * Score items expected: { name, score, date, time_taken }
  */
 export function Scores({ userName = '', authState = 'unauthenticated' }) {
   const [scores, setScores] = React.useState([]);
@@ -19,6 +19,13 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
     }
   }, []);
 
+  function formatTime(sec) {
+    if (sec === undefined || sec === null) return '-';
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
   const scoreRows = [];
   if (scores && scores.length) {
     for (const [i, score] of scores.entries()) {
@@ -28,13 +35,14 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
           <td>{score.name}</td>
           <td>{score.score}</td>
           <td>{score.date}</td>
+          <td>{formatTime(score.time_taken)}</td>
         </tr>
       );
     }
   } else {
     scoreRows.push(
       <tr key="0">
-        <td colSpan="4">Be the first to score</td>
+        <td colSpan="5">Be the first to score</td>
       </tr>
     );
   }
@@ -49,6 +57,7 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
             <th>Name</th>
             <th>Score</th>
             <th>Date</th>
+            <th>Time taken</th>
           </tr>
         </thead>
         <tbody>
