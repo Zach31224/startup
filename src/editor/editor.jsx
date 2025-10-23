@@ -2,31 +2,26 @@ import React from 'react';
 import './editor.css';
 
 export function Editor() {
-  return (
-    <main>
-      <Timer />
-      <div className="editor-container">
-        <div className="editor-code-area">
-          <textarea className="editor-textarea" rows="20" cols="40" placeholder="Write your Python code here..."></textarea>
-          <button className="editor-run-btn">Run Code</button>
-          <div>
-            <h3 style={{
-              fontFamily: "'Comic Sans MS', 'Marker Felt', cursive, sans-serif", color: '#114c26', marginBottom: '0.4em'
-            }}>Output:</h3>
-            <pre className="editor-output"><em>Your code's output will appear here.</em></pre>
-          </div>
-          <p className="system-event"><em>Third-party API calls and code execution will be implemented here.</em></p>
-        </div>
-        <img src="/Maze.png" className="editor-maze-img" alt="Maze" />
-      </div>
-    </main>
-  );
-}
+  const [code, setCode] = React.useState(() => {
+    try {
+      return localStorage.getItem('pythings.editor.code') || '';
+    } catch {
+      return '';
+    }
+  });
 
-export function Timer() {
   const [elapsed, setElapsed] = React.useState(0);
   const [running, setRunning] = React.useState(false);
+  const [output, setOutput] = React.useState('');
   const intervalRef = React.useRef(null);
+  const textareaRef = React.useRef(null);
+  const gutterRef = React.useRef(null);
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('pythings.editor.code', code);
+    } catch {}
+  }, [code]);
 
   React.useEffect(() => {
     if (running) {
@@ -48,8 +43,6 @@ export function Timer() {
     };
   }, [running]);
 
-  const editorDisabled = false;
-
   function formatTime(sec) {
     const m = Math.floor(sec / 60);
     const s = sec % 60;
@@ -67,21 +60,168 @@ export function Timer() {
   function handleReset() {
     setRunning(false);
     setElapsed(0);
+    setOutput('');
+  }
+
+  function handleRun() {
+    const lines = code.split('\n').length;
+    const chars = code.length;
+    const now = new Date().toLocaleString();
+    const simulatedOutput = `Simulated run — ${lines} line(s), ${chars} char(s). (${now}) Elapsed: ${formatTime(elapsed)}`;
+    setOutput(simulatedOutput);
+    try {
+      const raw = localStorage.getItem('pythings.submissions');
+      const arr = raw ? JSON.parse(raw) : [];
+      arr.unshift({ code, date: now, elapsed });
+      const truncated = arr.slice(0, 50);
+      localStorage.setItem('pythings.submissions', JSON.stringify(truncated));
+    } catch {}
+  }
+
+  const lineCount = Math.max(1, code.split('\n').length);
+  const lineNumbers = Array.from({ length: lineCount }, (_, i) => i + 1);
+
+  // keep gutter scroll synced with textarea
+  function handleScroll(e) {
+    if (gutterRef.current) {
+      gutterRef.current.scrollTop = e.target.scrollTop;
+    }
+  }
+
+  // Tab handling and auto-indent for textarea
+  function handleKeyDown(e) {
+    if (!textareaRef.current) return;
+
+    const el = textareaRef.current;
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+
+    // Insert tab (use 2 spaces or "\t")
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const tab = '  '; // two spaces; change to '\t' if you want a real tab
+      const newValue = code.slice(0, start) + tab + code.slice(end);
+      setCode(newValue);
+      // move caret after inserted tab
+      window.requestAnimationFrame(() => {
+        el.selectionStart = el.selectionEnd = start + tab.length;
+      });
+    } else if (e.key === 'Enter') {
+      // auto-indent: copy indentation from current line
+      const lineStart = code.lastIndexOf('\n', start - 1) + 1;
+      const line = code.slice(lineStart, start);
+      const indentMatch = line.match(/^\s*/);
+      const indent = indentMatch ? indentMatch[0] : '';
+      const insert = '\n' + indent;
+      e.preventDefault();
+      const newValue = code.slice(0, start) + insert + code.slice(end);
+      setCode(newValue);
+      window.requestAnimationFrame(() => {
+        const pos = start + insert.length;
+        el.selectionStart = el.selectionEnd = pos;
+      });
+    } else if ((e.key === ']' || e.key === '[') && (e.ctrlKey || e.metaKey)) {
+      // optional: Ctrl+] / Ctrl+[ to indent/unindent the current line
+      e.preventDefault();
+      const lineStart = code.lastIndexOf('\n', start - 1) + 1;
+      const lineEnd = code.indexOf('\n', start);
+      const realLineEnd = lineEnd === -1 ? code.length : lineEnd;
+      const lineText = code.slice(lineStart, realLineEnd);
+      if (e.key === ']') {
+        // indent
+        const newLine = '  ' + lineText;
+        const newValue = code.slice(0, lineStart) + newLine + code.slice(realLineEnd);
+        setCode(newValue);
+        window.requestAnimationFrame(() => {
+          const delta = 2;
+          el.selectionStart = start + delta;
+          el.selectionEnd = end + delta;
+        });
+      } else {
+        // unindent (remove up to two leading spaces)
+        const newLine = lineText.replace(/^ {0,2}/, '');
+        const removed = lineText.length - newLine.length;
+        const newValue = code.slice(0, lineStart) + newLine + code.slice(realLineEnd);
+        setCode(newValue);
+        window.requestAnimationFrame(() => {
+          const delta = -removed;
+          el.selectionStart = Math.max(lineStart, start + delta);
+          el.selectionEnd = Math.max(lineStart, end + delta);
+        });
+      }
+    }
   }
 
   return (
-    <div className="editor-header">
-      <div className="timer">
-        <span className="timer-badge">{formatTime(elapsed)}</span>
-        <div className="timer-controls">
-          {!running && <button className="editor-run-btn" onClick={handleStart}>Start</button>}
-          {running && <button className="editor-run-btn" onClick={handlePause}>Pause</button>}
-          <button className="editor-run-btn" onClick={handleReset}>Reset</button>
+    <main className="editor-root">
+      <div className="editor-header">
+        <div className="timer">
+          <span className="timer-badge">{formatTime(elapsed)}</span>
+          <div className="timer-controls">
+            {!running && <button className="editor-run-btn" onClick={handleStart}>Start</button>}
+            {running && <button className="editor-run-btn" onClick={handlePause}>Pause</button>}
+            <button className="editor-run-btn" onClick={handleReset}>Reset</button>
+            <button className="editor-run-btn" onClick={handleRun}>Run</button>
+          </div>
+        </div>
+        <div className="editor-meta">
+          <small>Auto-saves draft to localStorage</small>
         </div>
       </div>
-      <div className="editor-meta">
-        <small>Auto-saves draft to localStorage</small>
+
+      <div className="editor-container">
+        <div className="editor-code-area" aria-label="Code editor">
+          <div className="code-editor-wrapper">
+            <div className="gutter" ref={gutterRef} aria-hidden>
+              {lineNumbers.map((n) => (
+                <div key={n} className="gutter-line">{n}</div>
+              ))}
+            </div>
+            <textarea
+              ref={textareaRef}
+              className="code-editor"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onScroll={handleScroll}
+              spellCheck={false}
+              placeholder="# Write your code here..."
+            />
+          </div>
+
+          <div className="editor-actions">
+            <button className="editor-run-btn" onClick={handleRun}>Run</button>
+            <button className="editor-run-btn" onClick={() => { setCode(''); localStorage.removeItem('pythings.editor.code'); }}>Clear</button>
+            <div className="small-note">Lines: {lineCount}</div>
+          </div>
+        </div>
+
+        <aside className="editor-preview">
+          <h3>Output</h3>
+          <pre className="output-box" aria-live="polite">{output || '(no output yet)'}</pre>
+
+          <h4>Submissions (most recent)</h4>
+          <div className="submissions">
+            {(() => {
+              try {
+                const raw = localStorage.getItem('pythings.submissions');
+                const arr = raw ? JSON.parse(raw) : [];
+                if (!arr.length) return <div className="muted">No submissions yet</div>;
+                return arr.slice(0, 6).map((s, i) => (
+                  <div key={i} className="submission">
+                    <div className="submission-meta">{s.date} — {s.elapsed ? formatTime(s.elapsed) : '—'}</div>
+                    <pre className="submission-code">{s.code.slice(0, 200)}{s.code.length > 200 ? '…' : ''}</pre>
+                  </div>
+                ));
+              } catch {
+                return <div className="muted">Unable to load submissions</div>;
+              }
+            })()}
+          </div>
+        </aside>
       </div>
-    </div>
+    </main>
   );
 }
+
+export default Editor;
