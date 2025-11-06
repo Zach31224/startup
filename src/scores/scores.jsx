@@ -13,13 +13,19 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
 
   async function loadScores() {
     try {
-      const response = await fetch('/api/scores');
+      const response = await fetch('/api/scores', {
+        credentials: 'include',
+      });
       if (response.ok) {
         const scoresData = await response.json();
         setScores(scoresData);
+      } else if (response.status === 401) {
+        console.log('Not authenticated - cannot load scores');
+        setScores([]);
       }
     } catch (error) {
       console.error('Failed to load scores:', error);
+      setScores([]);
     }
   }
 
@@ -28,11 +34,12 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
     if (!newScore.trim() || isNaN(newScore)) return;
 
     try {
-      const response = await fetch('/api/scores', {
+      const response = await fetch('/api/score', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           score: parseInt(newScore),
           game: gameName || 'puzzle'
@@ -43,6 +50,9 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
         setNewScore('');
         setGameName('');
         loadScores(); // Reload scores
+      } else if (response.status === 401) {
+        console.error('Not authenticated - cannot submit score');
+        alert('Please login to submit scores');
       } else {
         console.error('Failed to submit score');
       }
