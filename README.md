@@ -105,12 +105,12 @@ I've decided to stray away from the maze, and instead, will implement a series o
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Node.js/Express HTTP service** - I did not complete this part of the deliverable.
-- [ ] **Static middleware for frontend** - I did not complete this part of the deliverable.
-- [ ] **Calls to third party endpoints** - I did not complete this part of the deliverable.
-- [ ] **Backend service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Frontend calls service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Supports registration, login, logout, and restricted endpoint** - I did not complete this part of the deliverable.
+- [x] **Node.js/Express HTTP service** - Created a complete Express backend in `service/index.js` running on port 4000 with cookie-based authentication.
+- [x] **Static middleware for frontend** - Added `app.use(express.static('public'))` to serve the built React frontend from the public directory.
+- [x] **Calls to third party endpoints** - Integrated the Quotable.io API in `home.jsx` to display random inspirational quotes with technology/education tags.
+- [x] **Backend service endpoints** - Created 5 endpoints: `/api/auth/create` (register), `/api/auth/login`, `/api/auth/logout`, `/api/scores` (GET), and `/api/score` (POST).
+- [x] **Frontend calls service endpoints** - Updated `login.jsx` to call authentication endpoints and `scores.jsx` to call score endpoints using fetch with credentials.
+- [x] **Supports registration, login, logout, and restricted endpoint** - Full authentication system with bcrypt password hashing, UUID tokens, httpOnly cookies, and `verifyAuth` middleware protecting score endpoints.
 
 
 ## 🚀 DB deliverable
