@@ -1,37 +1,70 @@
 import React from 'react';
 import './scores.css';
+import { AuthState } from '../auth';
 
 export function Scores({ userName = '', authState = 'unauthenticated' }) {
   const [scores, setScores] = React.useState([]);
+  const [newScore, setNewScore] = React.useState('');
+  const [gameName, setGameName] = React.useState('');
 
   React.useEffect(() => {
-    const raw = localStorage.getItem('pythings.scores');
-    try {
-      const parsed = raw ? JSON.parse(raw) : [];
-      setScores(parsed);
-    } catch (err) {
-      console.error('Failed to parse scores', err);
-      setScores([]);
-    }
+    loadScores();
   }, []);
 
-  function formatTime(sec) {
-    if (sec === undefined || sec === null) return '-';
-    const m = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  async function loadScores() {
+    try {
+      const response = await fetch('/api/scores');
+      if (response.ok) {
+        const scoresData = await response.json();
+        setScores(scoresData);
+      }
+    } catch (error) {
+      console.error('Failed to load scores:', error);
+    }
+  }
+
+  async function submitScore(e) {
+    e.preventDefault();
+    if (!newScore.trim() || isNaN(newScore)) return;
+
+    try {
+      const response = await fetch('/api/scores', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          score: parseInt(newScore),
+          game: gameName || 'puzzle'
+        }),
+      });
+
+      if (response.ok) {
+        setNewScore('');
+        setGameName('');
+        loadScores(); // Reload scores
+      } else {
+        console.error('Failed to submit score');
+      }
+    } catch (error) {
+      console.error('Error submitting score:', error);
+    }
+  }
+
+  function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString();
   }
 
   const scoreRows = [];
   if (scores && scores.length) {
     for (const [i, score] of scores.entries()) {
       scoreRows.push(
-        <tr key={i}>
+        <tr key={score.id || i}>
           <td>{i + 1}</td>
-          <td>{score.name}</td>
+          <td>{score.email || score.name}</td>
           <td>{score.score}</td>
-          <td>{score.date}</td>
-          <td>{formatTime(score.time_taken)}</td>
+          <td>{formatDate(score.date)}</td>
+          <td>{score.game || 'puzzle'}</td>
         </tr>
       );
     }
@@ -46,14 +79,37 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
   return (
     <main>
       <h2>Leaderboard</h2>
+      
+      {authState === AuthState.Authenticated && (
+        <form onSubmit={submitScore} style={{ marginBottom: '2em', padding: '1em', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '400px', margin: '0 auto 2em auto' }}>
+          <h3>Submit Your Score</h3>
+          <input
+            type="number"
+            placeholder="Your score"
+            value={newScore}
+            onChange={(e) => setNewScore(e.target.value)}
+            style={{ width: '100%', padding: '0.5em', margin: '0.25em 0', borderRadius: '4px', border: '1px solid #ccc' }}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Game/Puzzle name (optional)"
+            value={gameName}
+            onChange={(e) => setGameName(e.target.value)}
+            style={{ width: '100%', padding: '0.5em', margin: '0.25em 0', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+          <button type="submit" className="editor-run-btn" style={{ marginTop: '0.5em' }}>Submit Score</button>
+        </form>
+      )}
+
       <table style={{ margin: '0 auto', fontFamily: "'Comic Sans MS', 'Marker Felt', cursive, sans-serif", color: '#114c26' }}>
         <thead>
           <tr>
             <th>#</th>
-            <th>Name</th>
+            <th>Player</th>
             <th>Score</th>
             <th>Date</th>
-            <th>Time taken</th>
+            <th>Game</th>
           </tr>
         </thead>
         <tbody>
