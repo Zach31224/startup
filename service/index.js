@@ -2,13 +2,10 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const express = require('express');
 const uuid = require('uuid');
+const DB = require('./database.js');
 const app = express();
 
 const authCookieName = 'token';
-
-// In-memory storage for users and scores (will be lost on restart)
-let users = [];
-let scores = [];
 
 // The service port - must use 4000 for backend
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
@@ -31,7 +28,7 @@ app.use('/api', apiRouter);
 
 // CreateAuth - register a new user
 apiRouter.post('/auth/create', async (req, res) => {
-  if (await findUser('email', req.body.email)) {
+  if (await DB.getUser(req.body.email)) {
     res.status(409).send({ msg: 'Existing user' });
   } else {
     const user = await createUser(req.body.email, req.body.password);
@@ -43,10 +40,11 @@ apiRouter.post('/auth/create', async (req, res) => {
 
 // GetAuth - login an existing user
 apiRouter.post('/auth/login', async (req, res) => {
-  const user = await findUser('email', req.body.email);
+  const user = await DB.getUser(req.body.email);
   if (user) {
     if (await bcrypt.compare(req.body.password, user.password)) {
       user.token = uuid.v4();
+      await DB.updateUser(user);
       console.log('Login successful, setting cookie with token:', user.token);
       setAuthCookie(res, user.token);
       res.send({ email: user.email });
@@ -58,9 +56,10 @@ apiRouter.post('/auth/login', async (req, res) => {
 
 // DeleteAuth - logout a user
 apiRouter.delete('/auth/logout', async (req, res) => {
-  const user = await findUser('token', req.cookies[authCookieName]);
+  const user = await DB.getUserByToken(req.cookies[authCookieName]);
   if (user) {
     delete user.token;
+    await DB.updateUser(user);
   }
   res.clearCookie(authCookieName);
   res.status(204).end();
@@ -72,7 +71,7 @@ const verifyAuth = async (req, res, next) => {
   console.log('Auth check - Cookie:', authToken);
   console.log('All cookies:', req.cookies);
   
-  const user = await findUser('token', authToken);
+  const user = await DB.getUserByToken(authToken);
   if (user) {
     console.log('User authenticated:', user.email);
     req.user = user; // Attach user to request
@@ -84,19 +83,21 @@ const verifyAuth = async (req, res, next) => {
 };
 
 // GetScores - retrieve all scores (requires authentication)
-apiRouter.get('/scores', verifyAuth, (_req, res) => {
+apiRouter.get('/scores', verifyAuth, async (_req, res) => {
+  const scores = await DB.getHighScores();
   res.send(scores);
 });
 
 // SubmitScore - submit a new score (requires authentication)
-apiRouter.post('/score', verifyAuth, (req, res) => {
+apiRouter.post('/score', verifyAuth, async (req, res) => {
   const newScore = {
     email: req.user.email,
     score: req.body.score,
     game: req.body.game || 'puzzle',
     date: new Date().toISOString(),
   };
-  scores = updateScores(newScore);
+  await DB.addScore(newScore);
+  const scores = await DB.getHighScores();
   res.send(scores);
 });
 
@@ -110,29 +111,6 @@ app.use((_req, res) => {
   res.sendFile('index.html', { root: 'public' });
 });
 
-// updateScores considers a new score for inclusion in the high scores
-function updateScores(newScore) {
-  let found = false;
-  for (const [i, prevScore] of scores.entries()) {
-    if (newScore.score > prevScore.score) {
-      scores.splice(i, 0, newScore);
-      found = true;
-      break;
-    }
-  }
-
-  if (!found) {
-    scores.push(newScore);
-  }
-
-  // Keep only top 10 scores
-  if (scores.length > 10) {
-    scores.length = 10;
-  }
-
-  return scores;
-}
-
 // createUser - creates a new user with hashed password
 async function createUser(email, password) {
   const passwordHash = await bcrypt.hash(password, 10);
@@ -141,13 +119,8 @@ async function createUser(email, password) {
     password: passwordHash,
     token: uuid.v4(),
   };
-  users.push(user);
+  await DB.addUser(user);
   return user;
-}
-
-// findUser - find a user by property name and value
-async function findUser(property, value) {
-  return users.find((u) => u[property] === value);
 }
 
 // setAuthCookie - set the authentication cookie
