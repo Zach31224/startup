@@ -35,6 +35,7 @@ apiRouter.post('/auth/create', async (req, res) => {
     res.status(409).send({ msg: 'Existing user' });
   } else {
     const user = await createUser(req.body.email, req.body.password);
+    console.log('User created, setting cookie with token:', user.token);
     setAuthCookie(res, user.token);
     res.send({ email: user.email });
   }
@@ -46,6 +47,7 @@ apiRouter.post('/auth/login', async (req, res) => {
   if (user) {
     if (await bcrypt.compare(req.body.password, user.password)) {
       user.token = uuid.v4();
+      console.log('Login successful, setting cookie with token:', user.token);
       setAuthCookie(res, user.token);
       res.send({ email: user.email });
       return;
@@ -66,11 +68,17 @@ apiRouter.delete('/auth/logout', async (req, res) => {
 
 // Middleware to verify that the user is authorized to call an endpoint
 const verifyAuth = async (req, res, next) => {
-  const user = await findUser('token', req.cookies[authCookieName]);
+  const authToken = req.cookies[authCookieName];
+  console.log('Auth check - Cookie:', authToken);
+  console.log('All cookies:', req.cookies);
+  
+  const user = await findUser('token', authToken);
   if (user) {
+    console.log('User authenticated:', user.email);
     req.user = user; // Attach user to request
     next();
   } else {
+    console.log('User NOT authenticated');
     res.status(401).send({ msg: 'Unauthorized' });
   }
 };
@@ -145,9 +153,9 @@ async function findUser(property, value) {
 // setAuthCookie - set the authentication cookie
 function setAuthCookie(res, authToken) {
   res.cookie(authCookieName, authToken, {
-    secure: true,
+    secure: false, // Set to false for development (HTTP), true for production (HTTPS)
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility in development
   });
 }
 

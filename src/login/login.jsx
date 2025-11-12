@@ -21,12 +21,51 @@ export function Login({ userName: initialUserName = '', authState = AuthState.Un
       return;
     }
 
-    // For now we accept any username/password pair
-    localStorage.setItem('pythings.user', username);
-    onAuthChange(username, AuthState.Authenticated);
+    try {
+      const endpoint = isRegistering ? '/api/auth/create' : '/api/auth/login';
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: username,
+          password: password,
+        }),
+        credentials: 'include', // Important for cookies
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('pythings.user', data.email);
+        onAuthChange(data.email, AuthState.Authenticated);
+        setPassword(''); // Clear password after successful login
+      } else {
+        const errorData = await response.json();
+        if (response.status === 409) {
+          setError('User already exists. Please login instead.');
+        } else if (response.status === 401) {
+          setError('Invalid username or password.');
+        } else {
+          setError(errorData.msg || 'Authentication failed.');
+        }
+      }
+    } catch (error) {
+      setError('Network error. Please try again.');
+      console.error('Auth error:', error);
+    }
   }
 
-  function handleLogout() {
+  async function handleLogout() {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+    
     localStorage.removeItem('pythings.user');
     setUsername('');
     setPassword('');

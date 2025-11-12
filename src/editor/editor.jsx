@@ -57,7 +57,7 @@ export function Editor() {
     setRunning(true);
   }
 
-  function handleFinish() {
+  async function handleFinish() {
     // only finish if timer is running (or if elapsed > 0)
     if (!running && elapsed === 0) {
       setOutput('No run in progress to finish.');
@@ -66,24 +66,36 @@ export function Editor() {
 
     setRunning(false);
 
-    const name = localStorage.getItem('pythings.user') || 'Anonymous';
-    const now = new Date().toLocaleString();
+    const userName = localStorage.getItem('pythings.user') || 'Anonymous';
+    
+    // Calculate score based on time (lower time = higher score)
+    // For example: base score of 1000 minus elapsed seconds
+    const calculatedScore = Math.max(100, 1000 - elapsed);
 
-    // Save a score entry with the elapsed time in the time_taken field
     try {
-      saveScoreEntry({ name, score: 100, date: now, time_taken: elapsed });
-      setOutput(`Finished: ${formatTime(elapsed)} — saved score for ${name}.`);
-    } catch (e) {
-      // fallback: manual localStorage write if util fails
-      try {
-        const raw = localStorage.getItem('pythings.scores');
-        const arr = raw ? JSON.parse(raw) : [];
-        arr.push({ name, score: 100, date: now, time_taken: elapsed });
-        localStorage.setItem('pythings.scores', JSON.stringify(arr));
-        setOutput(`Finished: ${formatTime(elapsed)} — saved score for ${name} (fallback).`);
-      } catch {
-        setOutput(`Finished: ${formatTime(elapsed)} — failed to save score.`);
+      // Save score to backend
+      const response = await fetch('/api/score', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          score: calculatedScore,
+          game: 'editor-challenge',
+        }),
+      });
+
+      if (response.ok) {
+        setOutput(`Finished: ${formatTime(elapsed)} — Score: ${calculatedScore} saved for ${userName}!`);
+      } else if (response.status === 401) {
+        setOutput(`Finished: ${formatTime(elapsed)} — Score: ${calculatedScore}. Please login to save scores.`);
+      } else {
+        setOutput(`Finished: ${formatTime(elapsed)} — Score: ${calculatedScore}. Failed to save to server.`);
       }
+    } catch (error) {
+      console.error('Failed to save score:', error);
+      setOutput(`Finished: ${formatTime(elapsed)} — Score: ${calculatedScore}. Network error.`);
     }
   }
 
