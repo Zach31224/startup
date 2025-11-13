@@ -117,8 +117,10 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Stores data in MongoDB** - I did not complete this part of the deliverable.
-- [ ] **Stores credentials in MongoDB** - I did not complete this part of the deliverable.
+- [x] **MongoDB Atlas database created** - Created a MongoDB Atlas cluster and configured network access
+- [x] **Stores data in MongoDB** - Created `database.js` module with MongoDB client connection. Score data (email, score, game, date) is stored.
+- [x] **Stores credentials in MongoDB** - User credentials are stored in the `user` collection. Implemented `addUser()`, `getUser()`, `getUserByToken()`, and `updateUser()` functions.
+- [x] **Restricts functionality based on authentication** - All database operations for scores require authentication. The `verifyAuth` middleware uses `DB.getUserByToken()` to verify user authentication before allowing access.
 
 ## 🚀 WebSocket deliverable
 
