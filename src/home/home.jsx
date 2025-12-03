@@ -61,9 +61,8 @@ export function Home() {
   }
 
   return (
-    <main className="container-fluid bg-secondary text-center">
+    <main className="container-fluid text-center">
       <section>
-        <h2>Welcome, User! <em>(will be changed later)</em></h2>
         <p>
           Pythings is a python learning website. Solve puzzles and make pixel art by writing Python code.<br />
           Try game levels, drawing challenges, or freestyle your own art. See your code run instantly, get feedback, and share creations!
@@ -94,7 +93,6 @@ export function Home() {
           </button>
         </div>
 
-        <img src="/sceetch.png" alt="Design Sketch" width="300" />
         <ul>
           <li><strong>Login:</strong> <NavLink to="/login">Go to Login</NavLink></li>
           <li><strong>Editor:</strong> <NavLink to="/editor">Try coding!</NavLink></li>

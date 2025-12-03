@@ -11,7 +11,7 @@ import { AuthState } from './auth';
 
 function NotFound() {
   return (
-    <main className="container-fluid bg-secondary text-center">
+    <main className="container-fluid text-center">
       404: Not Found
     </main>
   );
