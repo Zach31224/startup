@@ -5,8 +5,25 @@ body {
   color: #114c26;
 }
 
+.logo-bar {
+  background-color: #EDEEED;
+  width: 100%;
+  padding: 0.5em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header-logo {
+  max-width: 500px;
+  width: 90%;
+  height: auto;
+  display: block;
+}
+
 header {
-  min-height: 120px;
+  min-height: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;

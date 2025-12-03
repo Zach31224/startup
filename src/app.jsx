@@ -40,8 +40,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="body">
+        <div className="logo-bar">
+          <img src="/Logo2.png" alt="Pythings Logo" className="header-logo" />
+        </div>
         <header>
-          <h1>Pythings – Creative Code Puzzles</h1>
           <nav className="pything-nav">
             <NavLink to="/" className="pything-nav-link">Home</NavLink>
             {authState !== AuthState.Authenticated && (
