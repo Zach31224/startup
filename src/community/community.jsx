@@ -1,12 +1,12 @@
 import React from 'react';
-import './gallery.css';
+import './community.css';
 
-export function Gallery() {
+export function Community() {
   return (
     <main>
       <h2 style={{
         fontFamily: "'Comic Sans MS', 'Marker Felt', cursive, sans-serif", color: '#114c26'
-      }}>Gallery</h2>
+      }}>Community</h2>
       <div>
         <h3 style={{
           fontFamily: "'Comic Sans MS', 'Marker Felt', cursive, sans-serif", color: '#114c26'

@@ -5,7 +5,7 @@ import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import { Home } from './home/home';
 import { Login } from './login/login';
 import { Editor } from './editor/editor';
-import { Gallery } from './gallery/gallery';
+import { Community } from './community/community';
 import { Scores } from './scores/scores';
 import { AuthState } from './auth';
 
@@ -52,7 +52,7 @@ export default function App() {
             {authState === AuthState.Authenticated && (
               <NavLink to="/editor" className="pything-nav-link">Puzzles</NavLink>
             )}
-            <NavLink to="/gallery" className="pything-nav-link">Gallery</NavLink>
+            <NavLink to="/community" className="pything-nav-link">Community</NavLink>
             {authState === AuthState.Authenticated && (
               <NavLink to="/scores" className="pything-nav-link">Leaderboard</NavLink>
             )}
@@ -66,7 +66,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login userName={userName} authState={authState} onAuthChange={handleAuthChange} />} />
           <Route path="/editor" element={<Editor />} />
-          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/community" element={<Community />} />
           <Route path="/scores" element={<Scores userName={userName} authState={authState} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
