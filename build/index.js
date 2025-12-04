@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const uuid = require('uuid');
 const DB = require('./database.js');
-const { peerProxy } = require('./peerProxy.js');
 const app = express();
 
 const authCookieName = 'token';
@@ -11,14 +10,19 @@ const authCookieName = 'token';
 // The service port - must use 4000 for backend
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 
+// JSON body parsing using built-in middleware
 app.use(express.json());
 
+// Use the cookie parser middleware for tracking authentication tokens
 app.use(cookieParser());
 
+// Serve up the front-end static content hosting
 app.use(express.static('public'));
 
+// Trust first proxy (needed for production deployment)
 app.set('trust proxy', true);
 
+// Router for service endpoints
 const apiRouter = express.Router();
 app.use('/api', apiRouter);
 
@@ -339,8 +343,6 @@ function setAuthCookie(res, authToken) {
 }
 
 // Start the server
-const httpService = app.listen(port, () => {
+app.listen(port, () => {
   console.log(`Pythings backend service listening on port ${port}`);
 });
-
-peerProxy(httpService);
