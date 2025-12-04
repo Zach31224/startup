@@ -6,9 +6,32 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
   const [scores, setScores] = React.useState([]);
   const [newScore, setNewScore] = React.useState('');
   const [gameName, setGameName] = React.useState('');
+  const [notifications, setNotifications] = React.useState([]);
 
   React.useEffect(() => {
     loadScores();
+    
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
+    
+    socket.onopen = () => {
+      console.log('WebSocket connected');
+    };
+    
+    socket.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      if (msg.type === 'scoreSubmitted') {
+        setNotifications(prev => [...prev, msg]);
+        loadScores();
+        setTimeout(() => {
+          setNotifications(prev => prev.filter(n => n !== msg));
+        }, 5000);
+      }
+    };
+    
+    return () => {
+      socket.close();
+    };
   }, []);
 
   async function loadScores() {
@@ -47,6 +70,17 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
       });
 
       if (response.ok) {
+        const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+        const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
+        socket.onopen = () => {
+          socket.send(JSON.stringify({
+            type: 'scoreSubmitted',
+            user: userName,
+            score: parseInt(newScore),
+            game: gameName || 'puzzle'
+          }));
+          socket.close();
+        };
         setNewScore('');
         setGameName('');
         loadScores(); // Reload scores
@@ -92,6 +126,20 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
   return (
     <main>
       <h2>Leaderboard</h2>
+      
+      {notifications.map((notif, i) => (
+        <div key={i} style={{ 
+          backgroundColor: '#d4edda', 
+          color: '#155724', 
+          padding: '0.75em', 
+          marginBottom: '1em', 
+          borderRadius: '4px',
+          border: '1px solid #c3e6cb',
+          textAlign: 'center'
+        }}>
+          🎉 {notif.user} just scored {notif.score} points on {notif.game}!
+        </div>
+      ))}
       
       {authState === AuthState.Authenticated && (
         <form onSubmit={submitScore} style={{ marginBottom: '2em', padding: '1em', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '400px', margin: '0 auto 2em auto' }}>
