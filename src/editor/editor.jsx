@@ -26,15 +26,38 @@ export function Editor() {
   React.useEffect(() => {
     async function loadChallenges() {
       try {
-        const response = await fetch('/api/challenges');
-        if (response.ok) {
-          const data = await response.json();
-          setChallenges(data);
-          // Auto-select first challenge
-          if (data.length > 0) {
-            setSelectedChallenge(data[0]);
-            setCode(data[0].starterCode || '');
-          }
+        // Load official challenges
+        const officialResponse = await fetch('/api/challenges');
+        let allChallenges = [];
+        
+        if (officialResponse.ok) {
+          const officialData = await officialResponse.json();
+          allChallenges = officialData.map(c => ({ ...c, type: 'official' }));
+        }
+        
+        // Load community challenges
+        const communityResponse = await fetch('/api/community-challenges');
+        if (communityResponse.ok) {
+          const communityData = await communityResponse.json();
+          const formattedCommunity = communityData.map(c => ({
+            id: c._id,
+            title: c.title,
+            description: c.description,
+            difficulty: c.difficulty,
+            starterCode: c.starterCode || '# Write your code here\n',
+            testCases: c.testCases,
+            hints: c.hints || [],
+            author: c.author,
+            type: 'community'
+          }));
+          allChallenges = [...allChallenges, ...formattedCommunity];
+        }
+        
+        setChallenges(allChallenges);
+        // Auto-select first challenge
+        if (allChallenges.length > 0) {
+          setSelectedChallenge(allChallenges[0]);
+          setCode(allChallenges[0].starterCode || '');
         }
       } catch (error) {
         console.error('Failed to load challenges:', error);
@@ -159,7 +182,10 @@ export function Editor() {
 
           if (response.ok) {
             const result = await response.json();
-            const passed = result.success && result.output === testCase.expectedOutput;
+            // Trim whitespace for comparison to avoid issues with trailing newlines/spaces
+            const actualOutput = (result.output || '').trim();
+            const expectedOutput = (testCase.expectedOutput || '').trim();
+            const passed = result.success && actualOutput === expectedOutput;
             results.push({
               description: testCase.description,
               passed,
@@ -237,7 +263,7 @@ export function Editor() {
         credentials: 'include',
         body: JSON.stringify({
           score: score,
-          game: `challenge-${selectedChallenge?.id || 'freestyle'}`,
+          game: selectedChallenge?.title || 'Freestyle',
         }),
       });
       if (!response.ok && response.status !== 401) {
@@ -358,18 +384,35 @@ export function Editor() {
             }}
             className="challenge-dropdown"
           >
-            {challenges.map(c => (
-              <option key={c.id} value={c.id}>
-                {c.title} ({c.difficulty})
-              </option>
-            ))}
+            <optgroup label="Official Challenges">
+              {challenges.filter(c => c.type === 'official').map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.title} ({c.difficulty})
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Community Challenges">
+              {challenges.filter(c => c.type === 'community').map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.title} ({c.difficulty}) - by {c.author}
+                </option>
+              ))}
+            </optgroup>
           </select>
         </div>
         
         {selectedChallenge && (
           <>
-            <h2>{selectedChallenge.title}</h2>
+            <h2>
+              {selectedChallenge.title}
+              {selectedChallenge.type === 'community' && (
+                <span className="community-badge"> 👥 Community</span>
+              )}
+            </h2>
             <p>{selectedChallenge.description}</p>
+            {selectedChallenge.type === 'community' && (
+              <p className="challenge-author">Created by: {selectedChallenge.author}</p>
+            )}
             {selectedChallenge.hints && selectedChallenge.hints.length > 0 && (
               <details className="hints-section">
                 <summary>💡 Hints</summary>

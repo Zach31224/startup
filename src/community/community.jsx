@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './community.css';
 
 export function Community() {
+  const navigate = useNavigate();
   const [showForm, setShowForm] = React.useState(false);
   const [formData, setFormData] = React.useState({
     title: '',
@@ -261,7 +263,10 @@ export function Community() {
                   <span>By: {challenge.author}</span>
                   <span>{challenge.testCases?.length || 0} test cases</span>
                 </div>
-                <button className="try-challenge-btn editor-run-btn">
+                <button 
+                  className="try-challenge-btn editor-run-btn"
+                  onClick={() => navigate('/editor')}
+                >
                   Try Challenge
                 </button>
               </div>

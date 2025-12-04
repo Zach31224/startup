@@ -67,6 +67,19 @@
   font-style: italic;
 }
 
+.community-badge {
+  font-size: 0.7em;
+  color: #666;
+  font-weight: normal;
+}
+
+.challenge-author {
+  font-size: 0.9em;
+  color: #666;
+  font-style: italic;
+  margin-top: -0.5em;
+}
+
 .puzzle-header h2 {
   color: #114c26;
   margin: 0 0 1em 0;
