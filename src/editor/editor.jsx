@@ -21,8 +21,33 @@ export function Editor() {
   const intervalRef = React.useRef(null);
   const textareaRef = React.useRef(null);
   const gutterRef = React.useRef(null);
+  const [notifications, setNotifications] = React.useState([]);
+  const socketRef = React.useRef(null);
 
-  // Load challenges on mount
+  React.useEffect(() => {
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
+    socketRef.current = socket;
+    
+    socket.onopen = () => {
+      console.log('WebSocket connected');
+    };
+    
+    socket.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      if (msg.type === 'challengeCompleted') {
+        setNotifications(prev => [...prev, msg]);
+        setTimeout(() => {
+          setNotifications(prev => prev.filter(n => n !== msg));
+        }, 5000);
+      }
+    };
+    
+    return () => {
+      socket.close();
+    };
+  }, []);
+
   React.useEffect(() => {
     async function loadChallenges() {
       try {
@@ -169,6 +194,16 @@ export function Editor() {
           
           setOutput(`✅ All tests passed! Challenge complete! Score: ${calculatedScore}`);
           await saveScore(calculatedScore);
+          
+          if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+            socketRef.current.send(JSON.stringify({
+              type: 'challengeCompleted',
+              challenge: selectedChallenge.title,
+              difficulty: selectedChallenge.difficulty,
+              score: calculatedScore,
+              time: elapsed
+            }));
+          }
         } else {
           setOutput(`❌ Some tests failed. Keep trying!`);
         }
@@ -308,6 +343,20 @@ export function Editor() {
 
   return (
     <main className="editor-root">
+      {notifications.map((notif, i) => (
+        <div key={i} style={{ 
+          backgroundColor: '#fff3cd', 
+          color: '#856404', 
+          padding: '0.75em', 
+          marginBottom: '1em', 
+          borderRadius: '4px',
+          border: '1px solid #ffeaa7',
+          textAlign: 'center'
+        }}>
+          🏆 Someone just completed "{notif.challenge}" ({notif.difficulty}) with a score of {notif.score} in {notif.time}s!
+        </div>
+      ))}
+      
       <div className="editor-header">
         <div className="timer">
           <span className="timer-badge">{formatTime(elapsed)}</span>
