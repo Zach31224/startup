@@ -64,8 +64,8 @@ export function Home() {
     <main className="container-fluid text-center">
       <section>
         <p>
-          Pythings is a python learning website. Solve puzzles and make pixel art by writing Python code.<br />
-          Try game levels, drawing challenges, or freestyle your own art. See your code run instantly, get feedback, and share creations!
+          Pythings is a python learning website. Write Python code to solve puzzles and create challenges for your friends!<br />
+          Try different difficulties to improve your coding skills!
         </p>
         
         {/* Third-party API integration - inspirational quote */}

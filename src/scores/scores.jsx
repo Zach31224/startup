@@ -4,8 +4,6 @@ import { AuthState } from '../auth';
 
 export function Scores({ userName = '', authState = 'unauthenticated' }) {
   const [scores, setScores] = React.useState([]);
-  const [newScore, setNewScore] = React.useState('');
-  const [gameName, setGameName] = React.useState('');
   const [notifications, setNotifications] = React.useState([]);
 
   React.useEffect(() => {
@@ -52,49 +50,6 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
     }
   }
 
-  async function submitScore(e) {
-    e.preventDefault();
-    if (!newScore.trim() || isNaN(newScore)) return;
-
-    try {
-      const response = await fetch('/api/score', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          score: parseInt(newScore),
-          game: gameName || 'puzzle'
-        }),
-      });
-
-      if (response.ok) {
-        const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-        const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
-        socket.onopen = () => {
-          socket.send(JSON.stringify({
-            type: 'scoreSubmitted',
-            user: userName,
-            score: parseInt(newScore),
-            game: gameName || 'puzzle'
-          }));
-          socket.close();
-        };
-        setNewScore('');
-        setGameName('');
-        loadScores(); // Reload scores
-      } else if (response.status === 401) {
-        console.error('Not authenticated - cannot submit score');
-        alert('Please login to submit scores');
-      } else {
-        console.error('Failed to submit score');
-      }
-    } catch (error) {
-      console.error('Error submitting score:', error);
-    }
-  }
-
   function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString();
   }
@@ -107,11 +62,11 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
     for (const [i, score] of topScores.entries()) {
       scoreRows.push(
         <tr key={score.id || i}>
-          <td>{i + 1}</td>
-          <td>{score.email || score.name}</td>
-          <td>{score.score}</td>
-          <td>{formatDate(score.date)}</td>
-          <td>{score.game || 'puzzle'}</td>
+          <td style={{ padding: '0.5em 2em' }}>{i + 1}</td>
+          <td style={{ padding: '0.5em 2em' }}>{score.email || score.name}</td>
+          <td style={{ padding: '0.5em 2em' }}>{score.score}</td>
+          <td style={{ padding: '0.5em 2em' }}>{formatDate(score.date)}</td>
+          <td style={{ padding: '0.5em 2em' }}>{score.game || 'puzzle'}</td>
         </tr>
       );
     }
@@ -140,37 +95,15 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
           🎉 {notif.user} just scored {notif.score} points on {notif.game}!
         </div>
       ))}
-      
-      {authState === AuthState.Authenticated && (
-        <form onSubmit={submitScore} style={{ marginBottom: '2em', padding: '1em', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '400px', margin: '0 auto 2em auto' }}>
-          <h3>Submit Your Score</h3>
-          <input
-            type="number"
-            placeholder="Your score"
-            value={newScore}
-            onChange={(e) => setNewScore(e.target.value)}
-            style={{ width: '100%', padding: '0.5em', margin: '0.25em 0', borderRadius: '4px', border: '1px solid #ccc' }}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Game/Puzzle name (optional)"
-            value={gameName}
-            onChange={(e) => setGameName(e.target.value)}
-            style={{ width: '100%', padding: '0.5em', margin: '0.25em 0', borderRadius: '4px', border: '1px solid #ccc' }}
-          />
-          <button type="submit" className="editor-run-btn" style={{ marginTop: '0.5em' }}>Submit Score</button>
-        </form>
-      )}
 
-      <table style={{ margin: '0 auto', fontFamily: "'Comic Sans MS', 'Marker Felt', cursive, sans-serif", color: '#114c26' }}>
+      <table style={{ margin: '0 auto', fontFamily: "'Comic Sans MS', 'Marker Felt', cursive, sans-serif", color: '#114c26', borderSpacing: '2em 0.5em' }}>
         <thead>
           <tr>
-            <th>#</th>
-            <th>Player</th>
-            <th>Score</th>
-            <th>Date</th>
-            <th>Game</th>
+            <th style={{ padding: '0.5em 2em' }}>#</th>
+            <th style={{ padding: '0.5em 2em' }}>Player</th>
+            <th style={{ padding: '0.5em 2em' }}>Score</th>
+            <th style={{ padding: '0.5em 2em' }}>Date</th>
+            <th style={{ padding: '0.5em 2em' }}>Game</th>
           </tr>
         </thead>
         <tbody>

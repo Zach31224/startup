@@ -177,22 +177,20 @@ export function Editor() {
           }
         }
 
-        setTestResults({ results, allPassed });
+        let calculatedScore = 0;
         
         if (allPassed) {
-          // Calculate score based on difficulty and time
-          let baseScore = 100; // beginner
+          let baseScore = 100;
           if (selectedChallenge.difficulty === 'intermediate') {
             baseScore = 500;
           } else if (selectedChallenge.difficulty === 'advanced') {
             baseScore = 1000;
           }
           
-          // Subtract 10 points per second elapsed
-          const timePenalty = elapsed * 10;
-          const calculatedScore = Math.max(0, baseScore - timePenalty);
+          const timePenalty = elapsed;
+          calculatedScore = Math.max(0, baseScore - timePenalty);
           
-          setOutput(`✅ All tests passed! Challenge complete! Score: ${calculatedScore}`);
+          setOutput(`✅ All tests passed! Challenge complete!\n\n🏆 Score Breakdown:\nBase Score (${selectedChallenge.difficulty}): ${baseScore}\nTime Penalty (${elapsed}s): -${timePenalty}\nFinal Score: ${calculatedScore}`);
           await saveScore(calculatedScore);
           
           if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
@@ -207,6 +205,8 @@ export function Editor() {
         } else {
           setOutput(`❌ Some tests failed. Keep trying!`);
         }
+        
+        setTestResults({ results, allPassed, score: calculatedScore });
       } else {
         // Freestyle mode - just run the code
         const response = await fetch('/api/execute-python', {
@@ -468,6 +468,21 @@ export function Editor() {
           {testResults && (
             <div className="test-results">
               <h4>Test Results</h4>
+              {testResults.allPassed && testResults.score > 0 && (
+                <div style={{
+                  backgroundColor: '#d4edda',
+                  color: '#155724',
+                  padding: '1em',
+                  marginBottom: '1em',
+                  borderRadius: '4px',
+                  border: '1px solid #c3e6cb',
+                  textAlign: 'center',
+                  fontSize: '1.2em',
+                  fontWeight: 'bold'
+                }}>
+                  🏆 Final Score: {testResults.score}
+                </div>
+              )}
               {testResults.results.map((result, i) => (
                 <div key={i} className={`test-case ${result.passed ? 'passed' : 'failed'}`}>
                   <div className="test-header">
