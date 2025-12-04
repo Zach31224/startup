@@ -126,8 +126,8 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Backend listens for WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Frontend makes WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Data sent over WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **WebSocket data displayed** - I did not complete this part of the deliverable.
-- [ ] **Application is fully functional** - I did not complete this part of the deliverable.
+- [x] **Backend listens for WebSocket connection** - Created `peerProxy.js` module that uses the `ws` library to handle WebSocket connections. The backend upgrades HTTP connections to WebSocket and maintains a list of active connections.
+- [x] **Frontend makes WebSocket connection** - Added WebSocket client code in both `scores.jsx` and `editor.jsx` that connects to the backend WebSocket server using the `/ws` endpoint. Connection protocol automatically adjusts for http/https.
+- [x] **Data sent over WebSocket connection** - WebSocket messages are sent when users complete challenges (from editor) and submit scores (from leaderboard). Messages include user info, scores, challenge details, and timestamps.
+- [x] **WebSocket data displayed** - Real-time notifications appear in both the Editor and Leaderboard pages showing when other users complete challenges or submit scores. Notifications auto-dismiss after 5 seconds.
+- [x] **Application is fully functional** - All features work end-to-end: users can register, login, solve challenges, see real-time activity from other users, and view the leaderboard. No mocks or placeholders remain.
