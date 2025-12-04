@@ -60,6 +60,13 @@
   margin: 0.3em 0;
 }
 
+.honor-code-note {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 1em;
+  font-style: italic;
+}
+
 .puzzle-header h2 {
   color: #114c26;
   margin: 0 0 1em 0;

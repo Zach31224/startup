@@ -341,6 +341,12 @@ export function Editor() {
       </div>
 
       <div className="puzzle-header">
+        <p className="honor-code-note">
+          <em>For now, we can't check your code to make sure you follow all of the instructions. 
+          We only check your output. Do the right thing, and follow the instructions. 
+          Jesus knows when you cheat. :)</em>
+        </p>
+        
         <div className="challenge-selector">
           <label htmlFor="challenge-select"><strong>Select Challenge:</strong></label>
           <select 

@@ -1,1 +1,13 @@
-/* Add gallery-specific styles here if needed */
+.create-challenge-btn {
+  height: 50px;
+  width: 200px;
+  font-size: 1.1rem;
+  margin: 1em 0;
+}
+
+.submit-challenge-btn {
+  height: 50px;
+  width: 200px;
+  font-size: 1.1rem;
+  margin-top: 1em;
+}
