@@ -1,8 +1,8 @@
-# Pythings – Creative Code Puzzles
+# Pythings – Python Learning Through Puzzles
 
 [My Notes](notes.md)
 
-Pythings is a python learning website. You solve puzzles and make cool pixel art by writing Python code. Try game levels (like coding your way through a maze), drawing challenges (where you match a picture using code), or just freestyle your own art. See your code run instantly, get feedback, and share your creations with friends!
+Pythings is an interactive Python learning platform where users solve coding challenges and compete on a leaderboard. Work through beginner to advanced puzzles, write and execute Python code in real-time, create your own challenges for the community, and track your progress. Perfect for learning Python fundamentals while having fun!
 
 
 > [!NOTE]
@@ -25,7 +25,7 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 - [x] One or more rough sketches of your application. Images must be embedded in this file using Markdown image references.
 
 ### 🚀 Elevator Pitch
-Pythings is a web platform where users solve visual puzzles and create art by writing Python code, allowing people to learn python in a fun environment. You can play games, make art, and even compete with friends. There is also a tutorial to get you set up with the basics. 
+Pythings is an interactive web platform where users learn Python by solving coding challenges ranging from beginner to advanced difficulty. Write code in a real-time editor, get instant feedback on your solutions, compete on a global leaderboard, and create your own challenges to share with the community. Whether you're just starting out or sharpening your skills, Pythings makes learning Python engaging and competitive! 
 
 
 ### Design
@@ -33,13 +33,14 @@ Pythings is a web platform where users solve visual puzzles and create art by wr
 I plan to make it snaked themed (because python), with green and black being the main color scheme. You can see the tentative designs of a terminal and game environment as well.
 
 ## ✨ Key Features
-- **User Authentication:** Register, login, and track your progress.
-- **In-Browser Python Editor:** Write and run code with a Bit-like API.
-- **Beginner Mode:** Learn how to code in python with guided tutorials. 
-- **Challenge Mode:** Take on geometry challenges, code a character through mazes, or replicate a picture.
-- **Free Mode:** Design challenges for yourself and others, create a nice work of art, or simply code. 
-- **Auto-Grading & Scoring:** System checks your solution and updates leaderboards.
-- **Sharing** View and comment on art made by the community, and try to beat their challenges. 
+- **User Authentication:** Secure registration and login system to track your progress.
+- **In-Browser Python Editor:** Write and execute Python code instantly with real-time output.
+- **Coding Challenges:** Solve puzzles ranging from beginner ("Hello, World!") to advanced difficulty levels.
+- **Auto-Grading System:** Automated test cases check your solutions and provide immediate feedback.
+- **Leaderboard:** Compete with others and see your ranking based on challenge completion scores.
+- **Community Challenges:** Create your own Python challenges with custom test cases and share them with others.
+- **Real-Time Notifications:** See when other users complete challenges or submit scores via WebSocket updates.
+- **Score Tracking:** Your best scores are saved and displayed on the global leaderboard. 
 
 ### Technologies
 
