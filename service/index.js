@@ -101,6 +101,42 @@ apiRouter.post('/score', verifyAuth, async (req, res) => {
   res.send(scores);
 });
 
+// GetChallenges - retrieve all challenges
+apiRouter.get('/challenges', async (req, res) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+    const challengesPath = path.join(__dirname, 'challenges.json');
+    const data = await fs.readFile(challengesPath, 'utf8');
+    const challenges = JSON.parse(data);
+    res.send(challenges);
+  } catch (error) {
+    console.error('Failed to load challenges:', error);
+    res.status(500).send({ error: 'Failed to load challenges' });
+  }
+});
+
+// GetChallenge - retrieve a specific challenge by id
+apiRouter.get('/challenges/:id', async (req, res) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+    const challengesPath = path.join(__dirname, 'challenges.json');
+    const data = await fs.readFile(challengesPath, 'utf8');
+    const challenges = JSON.parse(data);
+    const challenge = challenges.find(c => c.id === req.params.id);
+    
+    if (challenge) {
+      res.send(challenge);
+    } else {
+      res.status(404).send({ error: 'Challenge not found' });
+    }
+  } catch (error) {
+    console.error('Failed to load challenge:', error);
+    res.status(500).send({ error: 'Failed to load challenge' });
+  }
+});
+
 // ExecutePython - execute Python code and return output (requires authentication)
 apiRouter.post('/execute-python', verifyAuth, async (req, res) => {
   const { code, input } = req.body;

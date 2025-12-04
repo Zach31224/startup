@@ -1,0 +1,82 @@
+[
+  {
+    "id": "hello-world",
+    "title": "Hello, World!",
+    "description": "Write a program that prints \"Hello, World!\" to the console.",
+    "difficulty": "beginner",
+    "starterCode": "# Write your code here\n",
+    "expectedOutput": "Hello, World!\n",
+    "testCases": [
+      {
+        "input": "",
+        "expectedOutput": "Hello, World!\n",
+        "description": "Should print 'Hello, World!'"
+      }
+    ],
+    "hints": [
+      "Use the print() function",
+      "Don't forget the exclamation mark!"
+    ]
+  },
+  {
+    "id": "user-greeting",
+    "title": "User Input and Greeting",
+    "description": "Ask the user for their name and then print a personalized greeting like \"Hello, [Name]!\".",
+    "difficulty": "beginner",
+    "starterCode": "# Write your code here\n# Use input() to get the user's name\n",
+    "expectedOutput": null,
+    "testCases": [
+      {
+        "input": "Alice\n",
+        "expectedOutput": "Hello, Alice!\n",
+        "description": "Should greet Alice"
+      },
+      {
+        "input": "Bob\n",
+        "expectedOutput": "Hello, Bob!\n",
+        "description": "Should greet Bob"
+      },
+      {
+        "input": "Charlie\n",
+        "expectedOutput": "Hello, Charlie!\n",
+        "description": "Should greet Charlie"
+      }
+    ],
+    "hints": [
+      "Use input() to read user input",
+      "You can concatenate strings with +",
+      "Remember to add the exclamation mark"
+    ]
+  },
+  {
+    "id": "basic-calculator",
+    "title": "Basic Calculator",
+    "description": "Take two numbers as input from the user and print their sum, difference, product, and quotient.",
+    "difficulty": "beginner",
+    "starterCode": "# Write your code here\n# Get two numbers from the user\n# Calculate and print: sum, difference, product, quotient\n",
+    "expectedOutput": null,
+    "testCases": [
+      {
+        "input": "10\n5\n",
+        "expectedOutput": "Sum: 15\nDifference: 5\nProduct: 50\nQuotient: 2.0\n",
+        "description": "Calculate 10 and 5"
+      },
+      {
+        "input": "20\n4\n",
+        "expectedOutput": "Sum: 24\nDifference: 16\nProduct: 80\nQuotient: 5.0\n",
+        "description": "Calculate 20 and 4"
+      },
+      {
+        "input": "7\n3\n",
+        "expectedOutput": "Sum: 10\nDifference: 4\nProduct: 21\nQuotient: 2.3333333333333335\n",
+        "description": "Calculate 7 and 3"
+      }
+    ],
+    "hints": [
+      "Use input() to get the numbers",
+      "Convert strings to numbers with int() or float()",
+      "Format your output exactly as shown",
+      "Division with / gives a float result"
+    ]
+  }
+]
