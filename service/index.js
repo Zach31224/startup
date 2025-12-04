@@ -178,8 +178,11 @@ async function executePythonCode(code, input = '') {
       let stderr = '';
       let timedOut = false;
       
+      // Use 'python3' on Unix-like systems, 'python' on Windows
+      const pythonCommand = os.platform() === 'win32' ? 'python' : 'python3';
+      
       // Spawn Python process
-      const pythonProcess = spawn('python', [tempFile], {
+      const pythonProcess = spawn(pythonCommand, [tempFile], {
         timeout: timeout,
         killSignal: 'SIGTERM'
       });

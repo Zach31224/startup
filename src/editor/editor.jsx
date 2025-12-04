@@ -14,9 +14,34 @@ export function Editor() {
   const [elapsed, setElapsed] = React.useState(0);
   const [running, setRunning] = React.useState(false);
   const [output, setOutput] = React.useState('');
+  const [challenges, setChallenges] = React.useState([]);
+  const [selectedChallenge, setSelectedChallenge] = React.useState(null);
+  const [testResults, setTestResults] = React.useState(null);
+  const [isExecuting, setIsExecuting] = React.useState(false);
   const intervalRef = React.useRef(null);
   const textareaRef = React.useRef(null);
   const gutterRef = React.useRef(null);
+
+  // Load challenges on mount
+  React.useEffect(() => {
+    async function loadChallenges() {
+      try {
+        const response = await fetch('/api/challenges');
+        if (response.ok) {
+          const data = await response.json();
+          setChallenges(data);
+          // Auto-select first challenge
+          if (data.length > 0) {
+            setSelectedChallenge(data[0]);
+            setCode(data[0].starterCode || '');
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load challenges:', error);
+      }
+    }
+    loadChallenges();
+  }, []);
 
   React.useEffect(() => {
     try {
@@ -105,19 +130,131 @@ export function Editor() {
     setOutput('');
   }
 
-  function handleRun() {
-    const lines = code.split('\n').length;
-    const chars = code.length;
-    const now = new Date().toLocaleString();
-    const simulatedOutput = `Simulated run — ${lines} line(s), ${chars} char(s). (${now}) Elapsed: ${formatTime(elapsed)}`;
-    setOutput(simulatedOutput);
+  async function handleRun() {
+    if (!code.trim()) {
+      setOutput('Error: No code to execute');
+      return;
+    }
+
+    setIsExecuting(true);
+    setOutput('Executing...');
+    setTestResults(null);
+
     try {
-      const raw = localStorage.getItem('pythings.submissions');
-      const arr = raw ? JSON.parse(raw) : [];
-      arr.unshift({ code, date: now, elapsed });
-      const truncated = arr.slice(0, 50);
-      localStorage.setItem('pythings.submissions', JSON.stringify(truncated));
-    } catch {}
+      if (selectedChallenge && selectedChallenge.testCases) {
+        // Run test cases for the challenge
+        const results = [];
+        let allPassed = true;
+
+        for (const testCase of selectedChallenge.testCases) {
+          const response = await fetch('/api/execute-python', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              code: code,
+              input: testCase.input || ''
+            })
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            const passed = result.success && result.output === testCase.expectedOutput;
+            results.push({
+              description: testCase.description,
+              passed,
+              expected: testCase.expectedOutput,
+              actual: result.output,
+              error: result.error
+            });
+            if (!passed) allPassed = false;
+          } else {
+            const error = await response.json();
+            results.push({
+              description: testCase.description,
+              passed: false,
+              error: error.message || 'Execution failed'
+            });
+            allPassed = false;
+          }
+        }
+
+        setTestResults({ results, allPassed });
+        
+        if (allPassed) {
+          setOutput(`✅ All tests passed! Challenge complete!`);
+          // Save success score
+          const calculatedScore = Math.max(100, 1000 - elapsed);
+          await saveScore(calculatedScore);
+        } else {
+          setOutput(`❌ Some tests failed. Keep trying!`);
+        }
+      } else {
+        // Freestyle mode - just run the code
+        const response = await fetch('/api/execute-python', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ code, input: '' })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            setOutput(result.output || '(no output)');
+          } else {
+            setOutput(`Error:\n${result.error || 'Unknown error'}`);
+          }
+        } else {
+          const error = await response.json();
+          setOutput(`Execution failed: ${error.message || 'Unknown error'}`);
+        }
+      }
+
+      // Save to submissions
+      const now = new Date().toLocaleString();
+      try {
+        const raw = localStorage.getItem('pythings.submissions');
+        const arr = raw ? JSON.parse(raw) : [];
+        arr.unshift({ code, date: now, elapsed });
+        const truncated = arr.slice(0, 50);
+        localStorage.setItem('pythings.submissions', JSON.stringify(truncated));
+      } catch {}
+
+    } catch (error) {
+      console.error('Run error:', error);
+      setOutput(`Network error: ${error.message}`);
+    } finally {
+      setIsExecuting(false);
+    }
+  }
+
+  async function saveScore(score) {
+    try {
+      const response = await fetch('/api/score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          score: score,
+          game: `challenge-${selectedChallenge?.id || 'freestyle'}`,
+        }),
+      });
+      if (!response.ok && response.status !== 401) {
+        console.error('Failed to save score');
+      }
+    } catch (error) {
+      console.error('Failed to save score:', error);
+    }
+  }
+
+  function handleChallengeSelect(challenge) {
+    setSelectedChallenge(challenge);
+    setCode(challenge.starterCode || '');
+    setOutput('');
+    setTestResults(null);
+    setElapsed(0);
+    setRunning(false);
   }
 
   const lineCount = Math.max(1, code.split('\n').length);
@@ -204,11 +341,41 @@ export function Editor() {
       </div>
 
       <div className="puzzle-header">
-        <h2>Puzzle Number 1:</h2>
-        <p>Create a code that will output the following:</p>
-        <div className="puzzle-requirement">
-          "This is just a placeholder. I will have a series of puzzles implemented soon."
+        <div className="challenge-selector">
+          <label htmlFor="challenge-select"><strong>Select Challenge:</strong></label>
+          <select 
+            id="challenge-select"
+            value={selectedChallenge?.id || ''}
+            onChange={(e) => {
+              const challenge = challenges.find(c => c.id === e.target.value);
+              if (challenge) handleChallengeSelect(challenge);
+            }}
+            className="challenge-dropdown"
+          >
+            {challenges.map(c => (
+              <option key={c.id} value={c.id}>
+                {c.title} ({c.difficulty})
+              </option>
+            ))}
+          </select>
         </div>
+        
+        {selectedChallenge && (
+          <>
+            <h2>{selectedChallenge.title}</h2>
+            <p>{selectedChallenge.description}</p>
+            {selectedChallenge.hints && selectedChallenge.hints.length > 0 && (
+              <details className="hints-section">
+                <summary>💡 Hints</summary>
+                <ul>
+                  {selectedChallenge.hints.map((hint, i) => (
+                    <li key={i}>{hint}</li>
+                  ))}
+                </ul>
+              </details>
+            )}
+          </>
+        )}
       </div>
 
       <div className="editor-container">
@@ -232,8 +399,15 @@ export function Editor() {
           </div>
 
           <div className="editor-actions">
-            <button className="editor-run-btn" onClick={handleRun}>Run</button>
-            <button className="editor-run-btn" onClick={() => { setCode(''); localStorage.removeItem('pythings.editor.code'); }}>Clear</button>
+            <button 
+              className="editor-run-btn" 
+              onClick={handleRun}
+              disabled={isExecuting}
+            >
+              {isExecuting ? 'Running...' : 'Run Code'}
+            </button>
+            <button className="editor-run-btn" onClick={() => { setCode(selectedChallenge?.starterCode || ''); }}>Reset Code</button>
+            <button className="editor-run-btn" onClick={() => { setCode(''); localStorage.removeItem('pythings.editor.code'); }}>Clear All</button>
             <div className="small-note">Lines: {lineCount}</div>
           </div>
         </div>
@@ -241,6 +415,25 @@ export function Editor() {
         <aside className="editor-preview">
           <h3>Output</h3>
           <pre className="output-box" aria-live="polite">{output || '(no output yet)'}</pre>
+
+          {testResults && (
+            <div className="test-results">
+              <h4>Test Results</h4>
+              {testResults.results.map((result, i) => (
+                <div key={i} className={`test-case ${result.passed ? 'passed' : 'failed'}`}>
+                  <div className="test-header">
+                    {result.passed ? '✅' : '❌'} {result.description}
+                  </div>
+                  {!result.passed && (
+                    <div className="test-details">
+                      <div><strong>Expected:</strong> <code>{result.expected}</code></div>
+                      <div><strong>Got:</strong> <code>{result.actual || result.error}</code></div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
           <h4>Submissions (most recent)</h4>
           <div className="submissions">
