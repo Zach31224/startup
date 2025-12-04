@@ -92,13 +92,6 @@ export function Home() {
             New Quote
           </button>
         </div>
-
-        <ul>
-          <li><strong>Login:</strong> <NavLink to="/login">Go to Login</NavLink></li>
-          <li><strong>Editor:</strong> <NavLink to="/editor">Try coding!</NavLink></li>
-          <li><strong>Community:</strong> <NavLink to="/community">Share & browse challenges</NavLink></li>
-          <li><strong>Leaderboard:</strong> <NavLink to="/scores">See scores</NavLink></li>
-        </ul>
       </section>
     </main>
   );

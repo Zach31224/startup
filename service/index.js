@@ -101,6 +101,17 @@ apiRouter.post('/score', verifyAuth, async (req, res) => {
   res.send(scores);
 });
 
+// ClearScores - delete all scores (requires authentication)
+apiRouter.delete('/scores/clear', verifyAuth, async (req, res) => {
+  try {
+    await DB.clearAllScores();
+    res.send({ message: 'All scores cleared successfully' });
+  } catch (error) {
+    console.error('Failed to clear scores:', error);
+    res.status(500).send({ error: 'Failed to clear scores' });
+  }
+});
+
 // GetChallenges - retrieve all challenges
 apiRouter.get('/challenges', async (req, res) => {
   try {

@@ -98,60 +98,7 @@ export function Editor() {
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
-  function handleStart() {
-    // start fresh: reset elapsed and begin timing
-    setElapsed(0);
-    setOutput('');
-    setRunning(true);
-  }
 
-  async function handleFinish() {
-    // only finish if timer is running (or if elapsed > 0)
-    if (!running && elapsed === 0) {
-      setOutput('No run in progress to finish.');
-      return;
-    }
-
-    setRunning(false);
-
-    const userName = localStorage.getItem('pythings.user') || 'Anonymous';
-    
-    // Calculate score based on time (lower time = higher score)
-    // For example: base score of 1000 minus elapsed seconds
-    const calculatedScore = Math.max(100, 1000 - elapsed);
-
-    try {
-      // Save score to backend
-      const response = await fetch('/api/score', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          score: calculatedScore,
-          game: 'editor-challenge',
-        }),
-      });
-
-      if (response.ok) {
-        setOutput(`Finished: ${formatTime(elapsed)} — Score: ${calculatedScore} saved for ${userName}!`);
-      } else if (response.status === 401) {
-        setOutput(`Finished: ${formatTime(elapsed)} — Score: ${calculatedScore}. Please login to save scores.`);
-      } else {
-        setOutput(`Finished: ${formatTime(elapsed)} — Score: ${calculatedScore}. Failed to save to server.`);
-      }
-    } catch (error) {
-      console.error('Failed to save score:', error);
-      setOutput(`Finished: ${formatTime(elapsed)} — Score: ${calculatedScore}. Network error.`);
-    }
-  }
-
-  function handleReset() {
-    setRunning(false);
-    setElapsed(0);
-    setOutput('');
-  }
 
   async function handleRun() {
     if (!code.trim()) {
@@ -208,9 +155,19 @@ export function Editor() {
         setTestResults({ results, allPassed });
         
         if (allPassed) {
-          setOutput(`✅ All tests passed! Challenge complete!`);
-          // Save success score
-          const calculatedScore = Math.max(100, 1000 - elapsed);
+          // Calculate score based on difficulty and time
+          let baseScore = 100; // beginner
+          if (selectedChallenge.difficulty === 'intermediate') {
+            baseScore = 500;
+          } else if (selectedChallenge.difficulty === 'advanced') {
+            baseScore = 1000;
+          }
+          
+          // Subtract 10 points per second elapsed
+          const timePenalty = elapsed * 10;
+          const calculatedScore = Math.max(0, baseScore - timePenalty);
+          
+          setOutput(`✅ All tests passed! Challenge complete! Score: ${calculatedScore}`);
           await saveScore(calculatedScore);
         } else {
           setOutput(`❌ Some tests failed. Keep trying!`);
@@ -280,7 +237,7 @@ export function Editor() {
     setOutput('');
     setTestResults(null);
     setElapsed(0);
-    setRunning(false);
+    setRunning(true); // Auto-start timer when challenge is selected
   }
 
   const lineCount = Math.max(1, code.split('\n').length);
@@ -354,15 +311,9 @@ export function Editor() {
       <div className="editor-header">
         <div className="timer">
           <span className="timer-badge">{formatTime(elapsed)}</span>
-          <div className="timer-controls">
-            {!running && <button className="editor-run-btn" onClick={handleStart}>Start</button>}
-            {running && <button className="editor-run-btn" onClick={handleFinish}>Finish</button>}
-            <button className="editor-run-btn" onClick={handleReset}>Reset</button>
-            <button className="editor-run-btn" onClick={handleRun}>Run</button>
-          </div>
         </div>
         <div className="editor-meta">
-          <small>Auto-saves draft to localStorage</small>
+          <small>Timer starts when you select a challenge</small>
         </div>
       </div>
 

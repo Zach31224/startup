@@ -1,3 +1,25 @@
+/* Main community container */
+.community-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2em;
+  text-align: center;
+}
+
+.community-main h2 {
+  color: #114c26;
+  font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif;
+  font-size: 2em;
+  margin-bottom: 0.5em;
+}
+
+.community-intro {
+  color: #114c26;
+  font-size: 1.1em;
+  margin-bottom: 1.5em;
+}
+
+/* Create challenge button */
 .create-challenge-btn {
   height: 50px;
   width: 200px;
@@ -5,9 +27,260 @@
   margin: 1em 0;
 }
 
+/* Submit status message */
+.submit-status {
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 8px;
+  font-weight: bold;
+  background: #f0f8f0;
+  border: 2px solid #114c26;
+}
+
+/* Challenge creation form */
+.challenge-form {
+  background: #fff;
+  border: 3px solid #114c26;
+  border-radius: 12px;
+  padding: 2em;
+  margin: 2em auto;
+  max-width: 800px;
+  text-align: left;
+  box-shadow: 2px 4px 0 #114c26;
+}
+
+.challenge-form h3 {
+  color: #114c26;
+  margin-top: 0;
+  text-align: center;
+}
+
+/* Form groups - organize label and input pairs */
+.form-group {
+  margin-bottom: 1.5em;
+}
+
+.form-group label {
+  display: block;
+  color: #114c26;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.8em;
+  border: 2px solid #114c26;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.form-group textarea {
+  font-family: 'Courier New', monospace;
+  resize: vertical;
+}
+
+.form-group select {
+  cursor: pointer;
+}
+
+/* Test cases section within the form */
+.test-cases-section {
+  margin-top: 2em;
+  padding-top: 1.5em;
+  border-top: 2px dashed #114c26;
+}
+
+.test-cases-section h4 {
+  color: #114c26;
+  margin-bottom: 1em;
+}
+
+/* Individual test case in the form */
+.test-case-form {
+  background: #f0f8f0;
+  border: 2px solid #e6efe6;
+  border-radius: 8px;
+  padding: 1.5em;
+  margin-bottom: 1em;
+}
+
+.test-case-form h5 {
+  color: #114c26;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+/* Buttons for adding/removing test cases */
+.add-test-btn,
+.remove-test-btn {
+  padding: 0.6em 1.2em;
+  border: 2px solid #114c26;
+  border-radius: 8px;
+  background: #fff;
+  color: #114c26;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95em;
+  margin-top: 0.5em;
+}
+
+.add-test-btn:hover {
+  background: #f0f8f0;
+}
+
+.remove-test-btn {
+  background: #ffebee;
+  border-color: #d32f2f;
+  color: #d32f2f;
+}
+
+.remove-test-btn:hover {
+  background: #ffcdd2;
+}
+
+/* Submit challenge button */
 .submit-challenge-btn {
   height: 50px;
   width: 200px;
   font-size: 1.1rem;
   margin-top: 1em;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Community challenges section */
+.community-challenges {
+  margin-top: 3em;
+}
+
+.community-challenges h3 {
+  color: #114c26;
+  font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif;
+  font-size: 1.8em;
+  margin-bottom: 1em;
+}
+
+.no-challenges {
+  color: #666;
+  font-style: italic;
+  padding: 2em;
+}
+
+/* Grid layout for challenge cards */
+.challenge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5em;
+  margin-top: 2em;
+}
+
+/* Individual challenge card */
+.challenge-card {
+  background: #fff;
+  border: 3px solid #114c26;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: left;
+  box-shadow: 2px 4px 0 #114c26;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.challenge-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 6px 0 #114c26;
+}
+
+/* Challenge card header with title and difficulty */
+.challenge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1em;
+  gap: 1em;
+}
+
+.challenge-header h4 {
+  color: #114c26;
+  margin: 0;
+  flex: 1;
+  font-size: 1.3em;
+}
+
+/* Difficulty badge styling */
+.difficulty-badge {
+  padding: 0.3em 0.8em;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.difficulty-badge.beginner {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 2px solid #66bb6a;
+}
+
+.difficulty-badge.intermediate {
+  background: #fff3e0;
+  color: #e65100;
+  border: 2px solid #ff9800;
+}
+
+.difficulty-badge.advanced {
+  background: #ffebee;
+  color: #c62828;
+  border: 2px solid #f44336;
+}
+
+/* Challenge description text */
+.challenge-description {
+  color: #114c26;
+  margin-bottom: 1em;
+  line-height: 1.5;
+}
+
+/* Challenge metadata (author, test cases count) */
+.challenge-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 1em;
+  padding-top: 0.8em;
+  border-top: 1px dashed #e6efe6;
+}
+
+/* Try challenge button on cards */
+.try-challenge-btn {
+  width: 100%;
+  height: 42px;
+  font-size: 1rem;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .community-main {
+    padding: 1em;
+  }
+
+  .challenge-form {
+    padding: 1.5em;
+  }
+
+  .challenge-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .challenge-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

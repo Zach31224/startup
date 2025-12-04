@@ -66,6 +66,10 @@ function getCommunityChallengeById(id) {
   return communityChallengeCollection.findOne({ _id: new ObjectId(id) });
 }
 
+async function clearAllScores() {
+  return scoreCollection.deleteMany({});
+}
+
 module.exports = {
   getUser,
   getUserByToken,
@@ -76,4 +80,5 @@ module.exports = {
   addCommunityChallenge,
   getCommunityChallenges,
   getCommunityChallengeById,
+  clearAllScores,
 };

@@ -66,8 +66,11 @@ export function Scores({ userName = '', authState = 'unauthenticated' }) {
   }
 
   const scoreRows = [];
-  if (scores && scores.length) {
-    for (const [i, score] of scores.entries()) {
+  // Only show top 10 scores
+  const topScores = scores.slice(0, 10);
+  
+  if (topScores && topScores.length) {
+    for (const [i, score] of topScores.entries()) {
       scoreRows.push(
         <tr key={score.id || i}>
           <td>{i + 1}</td>
