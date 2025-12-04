@@ -6,6 +6,7 @@ const client = new MongoClient(url);
 const db = client.db('pythings');
 const userCollection = db.collection('user');
 const scoreCollection = db.collection('score');
+const communityChallengeCollection = db.collection('communityChallenge');
 
 // This will asynchronously test the connection and exit the process if it fails
 (async function testConnection() {
@@ -48,6 +49,23 @@ function getHighScores() {
   return cursor.toArray();
 }
 
+async function addCommunityChallenge(challenge) {
+  return communityChallengeCollection.insertOne(challenge);
+}
+
+function getCommunityChallenges() {
+  const options = {
+    sort: { createdAt: -1 },
+  };
+  const cursor = communityChallengeCollection.find({}, options);
+  return cursor.toArray();
+}
+
+function getCommunityChallengeById(id) {
+  const { ObjectId } = require('mongodb');
+  return communityChallengeCollection.findOne({ _id: new ObjectId(id) });
+}
+
 module.exports = {
   getUser,
   getUserByToken,
@@ -55,4 +73,7 @@ module.exports = {
   updateUser,
   addScore,
   getHighScores,
+  addCommunityChallenge,
+  getCommunityChallenges,
+  getCommunityChallengeById,
 };

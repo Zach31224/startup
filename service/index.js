@@ -116,6 +116,39 @@ apiRouter.get('/challenges', async (req, res) => {
   }
 });
 
+// GetCommunityChallenges - retrieve all community-created challenges
+apiRouter.get('/community-challenges', async (req, res) => {
+  try {
+    const challenges = await DB.getCommunityChallenges();
+    res.send(challenges);
+  } catch (error) {
+    console.error('Failed to load community challenges:', error);
+    res.status(500).send({ error: 'Failed to load community challenges' });
+  }
+});
+
+// CreateCommunityChallenge - create a new community challenge (requires authentication)
+apiRouter.post('/community-challenges', verifyAuth, async (req, res) => {
+  try {
+    const challenge = {
+      ...req.body,
+      author: req.user.email,
+      createdAt: new Date().toISOString(),
+    };
+    
+    // Validate required fields
+    if (!challenge.title || !challenge.description || !challenge.testCases || challenge.testCases.length === 0) {
+      return res.status(400).send({ error: 'Missing required fields' });
+    }
+    
+    await DB.addCommunityChallenge(challenge);
+    res.status(201).send({ message: 'Challenge created successfully' });
+  } catch (error) {
+    console.error('Failed to create community challenge:', error);
+    res.status(500).send({ error: 'Failed to create challenge' });
+  }
+});
+
 // GetChallenge - retrieve a specific challenge by id
 apiRouter.get('/challenges/:id', async (req, res) => {
   try {
