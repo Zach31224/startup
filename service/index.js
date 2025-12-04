@@ -332,9 +332,9 @@ async function createUser(email, password) {
 // setAuthCookie - set the authentication cookie
 function setAuthCookie(res, authToken) {
   res.cookie(authCookieName, authToken, {
-    secure: false, // Set to false for development (HTTP), true for production (HTTPS)
+    secure: true, // Must be true for HTTPS sites
     httpOnly: true,
-    sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility in development
+    sameSite: 'strict',
   });
 }
 
